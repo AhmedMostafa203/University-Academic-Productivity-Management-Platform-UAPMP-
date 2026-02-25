@@ -10,6 +10,7 @@ const API_CONFIG = {
   // API Endpoints
   ENDPOINTS: {
     REGISTER: "/api/auth/register",
+    VERIFY_EMAIL: "/api/auth/verify-email",
     LOGIN: "/api/auth/login",
     LOGOUT: "/api/auth/logout",
   },
@@ -17,6 +18,9 @@ const API_CONFIG = {
   // Generated URLs for easy access
   getRegisterUrl() {
     return this.BASE_URL + this.ENDPOINTS.REGISTER;
+  },
+  getVerifyEmailUrl() {
+    return this.BASE_URL + this.ENDPOINTS.VERIFY_EMAIL;
   },
   getLoginUrl() {
     return this.BASE_URL + this.ENDPOINTS.LOGIN;

@@ -38,6 +38,21 @@ const userSchema = new mongoose.Schema(
       enum: ["student", "instructor"],
       required: true,
     },
+    // University domain (e.g., 'cu.edu.eg' for Cairo University)
+    university: {
+      type: String,
+      required: true,
+    },
+    // College/Faculty name (e.g., 'Faculty of Engineering')
+    college: {
+      type: String,
+      required: true,
+    },
+    // Email verification status (default: false until verified)
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
   },
   // Enable automatic createdAt and updatedAt timestamps
   { timestamps: true },

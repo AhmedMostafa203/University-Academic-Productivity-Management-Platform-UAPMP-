@@ -179,6 +179,14 @@
             <label>Role</label>
             <span id="role">-</span>
           </div>
+          <div class="info-item">
+            <label>University</label>
+            <span id="university">-</span>
+          </div>
+          <div class="info-item">
+            <label>College / Faculty</label>
+            <span id="college">-</span>
+          </div>
         </div>
       </div>
 
@@ -230,13 +238,20 @@
     <script src="config.js"></script>
     <script>
       /**
-       * Load and display student user data from localStorage
-       * Redirects to registration if no user data found
+       * Load and display student user data
        */
       function loadUserData() {
+        // If no user in localStorage, redirect to registration
         const user = JSON.parse(localStorage.getItem("user"));
 
         if (!user) {
+          window.location.href = "frontend-test.html";
+          return;
+        }
+
+        // Enforce role: only students can view this page
+        if (user.role !== "student") {
+          alert("Access denied: this page is for students only.");
           window.location.href = "frontend-test.html";
           return;
         }
@@ -249,6 +264,10 @@
           user.studentId || "N/A";
         document.getElementById("role").textContent =
           user.role.charAt(0).toUpperCase() + user.role.slice(1);
+        // New fields
+        document.getElementById("university").textContent =
+          user.university || "-";
+        document.getElementById("college").textContent = user.college || "-";
       }
 
       function logout() {

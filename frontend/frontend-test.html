@@ -546,25 +546,15 @@
           const data = await response.json();
 
           if (response.ok) {
-            // Store user data
+            // Store user data for later use
             const userData = data.user;
             localStorage.setItem("user", JSON.stringify(userData));
-            localStorage.setItem("token", data.token);
 
-            // Show success message
+            // Show success message with verification instructions
             showResponse(
-              `✅ Registration successful!\nRedirecting to ${userData.role === "student" ? "student" : "instructor"} dashboard...`,
+              `✅ Registration successful!\n\n📧 Check your email for a verification link.\n\nClick the link to access your ${userData.role === "student" ? "student" : "instructor"} dashboard.\n\n⚠️ Note: The link will expire in 24 hours.`,
               false,
             );
-
-            // Redirect after 2 seconds
-            setTimeout(() => {
-              if (userData.role === "student") {
-                window.location.href = "student-dashboard.html";
-              } else if (userData.role === "instructor") {
-                window.location.href = "instructor-dashboard.html";
-              }
-            }, 2000);
 
             clearForm();
           } else {
