@@ -9,8 +9,6 @@ const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const Universities = require("../constants/universities");
-const { authenticateToken, authorizeRole } = require("../middleware/auth");
-
 const router = express.Router();
 
 // ============================================
