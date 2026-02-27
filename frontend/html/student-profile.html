@@ -105,11 +105,10 @@
               class="banner-img"
             />
             <div class="banner-text">
-              <h3 id="welcomeName">Welcome back,</h3>
+              <h3 id="welcomeName">Welcome,</h3>
               <p id="facultyText">Faculty • University</p>
               <div class="banner-badges">
                 <span id="idBadge" class="badge">ID: --</span>
-                <!-- last login removed as per request -->
               </div>
             </div>
           </div>
@@ -370,8 +369,7 @@
           );
 
           // welcome banner text
-          document.getElementById("welcomeName").textContent =
-            `Welcome back, ${name}!`;
+          document.getElementById("welcomeName").textContent = name;
           document.getElementById("facultyText").textContent =
             faculty && university
               ? `${faculty} • ${university}`
