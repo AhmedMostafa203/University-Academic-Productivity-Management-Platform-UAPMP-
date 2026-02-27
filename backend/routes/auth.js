@@ -9,6 +9,8 @@ const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const Universities = require("../constants/universities");
+const { authenticateToken, authorizeRole } = require("../middleware/auth");
+
 const router = express.Router();
 
 // ============================================
@@ -141,7 +143,7 @@ const sendVerificationEmail = async (email, userId, userName) => {
       <p>If you did not register for UAPMP, please ignore this email.</p>
     `,
   };
-  return transporter.sendMail(mailOptions);
+  return await transporter.sendMail(mailOptions);
 };
 
 // ============================================
@@ -262,7 +264,7 @@ router.post("/register", async (req, res) => {
     // Send verification email (link contains user id; verification checks createdAt)
     try {
       await sendVerificationEmail(
-        newUser.email, // Use the actual user email in production
+        emailLower, // Use the actual user email in production
         newUser._id,
         displayName,
       );
@@ -293,6 +295,9 @@ router.post("/register", async (req, res) => {
         "A verification link has been sent to your email. Please check your inbox (and spam folder).",
     });
   } catch (error) {
+    // ============================================
+    // ERROR HANDLING
+    // ============================================
     console.error("[ERROR] Registration process failed:", error.message);
 
     // Handle MongoDB duplicate key constraint violation
@@ -582,6 +587,46 @@ router.post("/login", async (req, res) => {
     res.status(500).json({
       message: "Internal server error",
       code: "INTERNAL_SERVER_ERROR",
+    });
+  }
+});
+
+/**
+ * GET /me
+ * Verify JWT token and return authenticated user data
+ * Protected endpoint - requires valid JWT token in Authorization header
+ */
+router.get("/me", authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        code: "USER_NOT_FOUND",
+      });
+    }
+
+    res.status(200).json({
+      message: "User authenticated successfully",
+      code: "AUTH_VERIFIED",
+      user: {
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        role: user.role,
+        university: user.university,
+        college: user.college,
+        studentId: user.studentId,
+        isEmailVerified: user.isEmailVerified,
+      },
+    });
+  } catch (err) {
+    console.error("[ERROR] Token verification failed:", err.message);
+    res.status(401).json({
+      message: "Invalid or expired token",
+      code: "INVALID_TOKEN",
     });
   }
 });

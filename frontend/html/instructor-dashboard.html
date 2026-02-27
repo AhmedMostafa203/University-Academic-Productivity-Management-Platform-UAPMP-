@@ -282,16 +282,44 @@
           return;
         }
 
-        document.getElementById("greeting").textContent =
-          `Welcome, ${user.fullName}! 👋`;
-        document.getElementById("fullName").textContent = user.fullName;
-        document.getElementById("email").textContent = user.email;
-        document.getElementById("role").textContent =
-          user.role.charAt(0).toUpperCase() + user.role.slice(1);
-        // New fields
-        document.getElementById("university").textContent =
-          user.university || "-";
-        document.getElementById("college").textContent = user.college || "-";
+        // Verify token with backend
+        fetch(API_CONFIG.BASE_URL + "/api/auth/me", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        })
+          .then((res) => {
+            if (!res.ok) {
+              throw new Error("Token verification failed");
+            }
+            return res.json();
+          })
+          .then((data) => {
+            // Token is valid, update localStorage with fresh user data and display
+            const userData = data.user;
+            localStorage.setItem("user", JSON.stringify(userData));
+
+            document.getElementById("greeting").textContent =
+              `Welcome, ${userData.fullName}! 👋`;
+            document.getElementById("fullName").textContent = userData.fullName;
+            document.getElementById("email").textContent = userData.email;
+            document.getElementById("role").textContent =
+              userData.role.charAt(0).toUpperCase() + userData.role.slice(1);
+            // New fields
+            document.getElementById("university").textContent =
+              userData.university || "-";
+            document.getElementById("college").textContent =
+              userData.college || "-";
+          })
+          .catch((err) => {
+            console.warn("Token verification failed:", err.message);
+            // Token is invalid/expired, clear and redirect to login
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            window.location.href = "frontend-test.html";
+          });
       }
 
       function logout() {

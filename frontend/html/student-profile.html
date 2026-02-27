@@ -263,7 +263,33 @@
         }
       });
     </script>
+    <script src="../config.js"></script>
     <script>
+      // Accept token/user from URL (after email verification) and store
+      (function handleUrlLogin() {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const token = params.get("token");
+          const userEncoded = params.get("user");
+          if (token && userEncoded) {
+            try {
+              const decoded = decodeURIComponent(userEncoded);
+              const userJson = atob(decoded);
+              const user = JSON.parse(userJson);
+              localStorage.setItem("token", token);
+              localStorage.setItem("user", JSON.stringify(user));
+              history.replaceState(
+                {},
+                document.title,
+                window.location.pathname,
+              );
+            } catch (e) {
+              console.warn("failed parse user from url", e.message);
+            }
+          }
+        } catch (e) {}
+      })();
+
       // ensure user is logged in and has student role
       (function guard() {
         const token = localStorage.getItem("token");
@@ -281,7 +307,34 @@
               user.role === "instructor"
                 ? "instructor-dashboard.html"
                 : "frontend-test.html";
+            return;
           }
+
+          // Verify token with backend
+          fetch(API_CONFIG.BASE_URL + "/api/auth/me", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          })
+            .then((res) => {
+              if (!res.ok) {
+                throw new Error("Token verification failed");
+              }
+              return res.json();
+            })
+            .then((data) => {
+              // Token is valid, update localStorage with fresh user data
+              localStorage.setItem("user", JSON.stringify(data.user));
+            })
+            .catch((err) => {
+              console.warn("Token verification failed:", err.message);
+              // Token is invalid/expired, clear and redirect to login
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+              window.location.href = "frontend-test.html";
+            });
         } catch {
           localStorage.removeItem("token");
           localStorage.removeItem("user");
