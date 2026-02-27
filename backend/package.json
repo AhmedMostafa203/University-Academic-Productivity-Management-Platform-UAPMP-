@@ -1,0 +1,30 @@
+{
+  "name": "uapmp",
+  "version": "1.0.0",
+  "description": "The University Academic Management Platform (UAPMP) is a comprehensive web-based system designed to streamline and digitize academic operations within universities. The platform connects students, professors, and administrators in a unified environment that enhances communication, organization, and academic workflow management.",
+  "homepage": "https://github.com/AhmedMostafa203/University-Academic-Productivity-Management-Platform-UAPMP-#readme",
+  "bugs": {
+    "url": "https://github.com/AhmedMostafa203/University-Academic-Productivity-Management-Platform-UAPMP-/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AhmedMostafa203/University-Academic-Productivity-Management-Platform-UAPMP-.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "backend/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node backend/server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.2.1",
+    "nodemailer": "^8.0.1"
+  }
+}
