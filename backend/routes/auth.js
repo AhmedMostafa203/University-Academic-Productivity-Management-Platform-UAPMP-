@@ -262,7 +262,7 @@ router.post("/register", async (req, res) => {
     // Send verification email (link contains user id; verification checks createdAt)
     try {
       await sendVerificationEmail(
-        "ahmedloby8@gmail.com", // Use the actual user email in production
+        newUser.email, // Use the actual user email in production
         newUser._id,
         displayName,
       );
