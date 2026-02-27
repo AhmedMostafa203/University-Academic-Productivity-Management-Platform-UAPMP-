@@ -231,12 +231,42 @@
       </div>
     </div>
 
-    <script src="config.js"></script>
+    <script src="../config.js"></script>
     <script>
+      // Accept token/user from URL (after verification) and store
+      (function handleUrlLogin() {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const token = params.get("token");
+          const userEncoded = params.get("user");
+          if (token && userEncoded) {
+            try {
+              const decoded = decodeURIComponent(userEncoded);
+              const userJson = atob(decoded);
+              const user = JSON.parse(userJson);
+              localStorage.setItem("token", token);
+              localStorage.setItem("user", JSON.stringify(user));
+              history.replaceState(
+                {},
+                document.title,
+                window.location.pathname,
+              );
+            } catch (e) {
+              console.warn("failed parse user from url", e.message);
+            }
+          }
+        } catch (e) {}
+      })();
+
       /**
        * Load and display instructor user data
        */
       function loadUserData() {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          window.location.href = "frontend-test.html";
+          return;
+        }
         // If no user in localStorage, redirect to registration
         const user = JSON.parse(localStorage.getItem("user"));
 

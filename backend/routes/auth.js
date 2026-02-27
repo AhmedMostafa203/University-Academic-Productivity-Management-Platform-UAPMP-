@@ -6,9 +6,15 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
+const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const Universities = require("../constants/universities");
+<<<<<<< Updated upstream
 const jwt = require("jsonwebtoken");
+=======
+const { authenticateToken, authorizeRole } = require("../middleware/auth");
+
+>>>>>>> Stashed changes
 const router = express.Router();
 
 // ============================================
@@ -125,7 +131,7 @@ const sendVerificationEmail = async (email, userId, userName) => {
   // Always send email via Nodemailer (ensure SMTP env vars are set)
   const transporter = getEmailTransporter();
   const mailOptions = {
-    from: process.env.EMAIL_FROM,
+    from: process.env.EMAIL_FROM || '"UAPMP Support" <noreply@uapmp.edu.eg>',
     to: email,
     subject: "Verify Your Email - UAPMP",
     html: `
@@ -141,7 +147,6 @@ const sendVerificationEmail = async (email, userId, userName) => {
       <p>If you did not register for UAPMP, please ignore this email.</p>
     `,
   };
-
   return transporter.sendMail(mailOptions);
 };
 
@@ -262,7 +267,15 @@ router.post("/register", async (req, res) => {
 
     // Send verification email (link contains user id; verification checks createdAt)
     try {
+<<<<<<< Updated upstream
       await sendVerificationEmail(emailLower, newUser._id, displayName);
+=======
+      await sendVerificationEmail(
+        "ahmedloby8@gmail.com", // Use the actual user email in production
+        newUser._id,
+        displayName,
+      );
+>>>>>>> Stashed changes
     } catch (emailError) {
       // Log email error but don't fail registration
       console.error(
@@ -290,9 +303,6 @@ router.post("/register", async (req, res) => {
         "A verification link has been sent to your email. Please check your inbox (and spam folder).",
     });
   } catch (error) {
-    // ============================================
-    // ERROR HANDLING
-    // ============================================
     console.error("[ERROR] Registration process failed:", error.message);
 
     // Handle MongoDB duplicate key constraint violation
@@ -437,13 +447,30 @@ router.get("/verify-email/:uid", async (req, res) => {
 
     // Check if email is already verified
     if (user.isEmailVerified) {
-      // Already verified - redirect to appropriate dashboard
+      // Already verified - build login redirect
+      const token = jwt.sign(
+        { id: user._id, role: user.role, email: user.email },
+        process.env.JWT_SECRET || "dev_jwt_secret",
+        { expiresIn: process.env.JWT_EXPIRES_IN || "7d" },
+      );
+      const userPayload = encodeURIComponent(
+        Buffer.from(
+          JSON.stringify({
+            id: user._id,
+            fullName: user.fullName,
+            email: user.email,
+            role: user.role,
+            university: user.university,
+            college: user.college,
+            studentId: user.studentId,
+          }),
+        ).toString("base64"),
+      );
       const dashboardUrl =
         user.role === "student"
-          ? "http://127.0.0.1:5501/frontend/student-dashboard.html"
-          : "http://127.0.0.1:5501/frontend/instructor-dashboard.html";
-
-      return res.redirect(dashboardUrl);
+          ? "http://127.0.0.1:5501/frontend/html/student-profile.html"
+          : "http://127.0.0.1:5501/frontend/html/instructor-dashboard.html";
+      return res.redirect(`${dashboardUrl}?token=${token}&user=${userPayload}`);
     }
 
     // Ensure the verification link is used within 24 hours of registration
@@ -473,13 +500,30 @@ router.get("/verify-email/:uid", async (req, res) => {
     user.isEmailVerified = true;
     await user.save();
 
-    // Redirect to appropriate dashboard
+    // After verification generate JWT & redirect with token
+    const token = jwt.sign(
+      { id: user._id, role: user.role, email: user.email },
+      process.env.JWT_SECRET || "dev_jwt_secret",
+      { expiresIn: process.env.JWT_EXPIRES_IN || "7d" },
+    );
+    const userPayload = encodeURIComponent(
+      Buffer.from(
+        JSON.stringify({
+          id: user._id,
+          fullName: user.fullName,
+          email: user.email,
+          role: user.role,
+          university: user.university,
+          college: user.college,
+          studentId: user.studentId,
+        }),
+      ).toString("base64"),
+    );
     const dashboardUrl =
       user.role === "student"
-        ? "http://127.0.0.1:5501/frontend/student-dashboard.html"
-        : "http://127.0.0.1:5501/frontend/instructor-dashboard.html";
-
-    res.redirect(dashboardUrl);
+        ? "http://127.0.0.1:5501/frontend/html/student-profile.html"
+        : "http://127.0.0.1:5501/frontend/html/instructor-dashboard.html";
+    res.redirect(`${dashboardUrl}?token=${token}&user=${userPayload}`);
   } catch (error) {
     console.error("[ERROR] Direct email verification failed:", error.message);
 
@@ -491,6 +535,7 @@ router.get("/verify-email/:uid", async (req, res) => {
   }
 });
 
+<<<<<<< Updated upstream
 
 
 
@@ -512,10 +557,32 @@ if (!email || !password) {
     if (!user) {
       return res.status(401).json({
         message: "Invalid email or password",
+=======
+/**
+ * POST /login
+ * Authenticate existing user and issue JWT
+ */
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "Email and password are required",
+        code: "MISSING_FIELDS",
+      });
+    }
+    const emailLower = email.toLowerCase();
+    const user = await User.findOne({ email: emailLower });
+    if (!user) {
+      return res.status(401).json({
+        message: "Invalid email or password",
+        code: "INVALID_CREDENTIALS",
+>>>>>>> Stashed changes
       });
     }
     if (!user.isEmailVerified) {
       return res.status(403).json({
+<<<<<<< Updated upstream
         message: "Email not verified",
       });
     }
@@ -532,6 +599,24 @@ if (!email || !password) {
       { expiresIn: "7d" }
     );
 
+=======
+        message: "Please verify your email first",
+        code: "EMAIL_NOT_VERIFIED",
+      });
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({
+        message: "Invalid email or password",
+        code: "INVALID_CREDENTIALS",
+      });
+    }
+    const token = jwt.sign(
+      { id: user._id, role: user.role, email: user.email },
+      process.env.JWT_SECRET || "dev_jwt_secret",
+      { expiresIn: process.env.JWT_EXPIRES_IN || "7d" },
+    );
+>>>>>>> Stashed changes
     res.status(200).json({
       message: "Login successful",
       token,
@@ -540,6 +625,7 @@ if (!email || !password) {
         fullName: user.fullName,
         email: user.email,
         role: user.role,
+<<<<<<< Updated upstream
       },
     });
   } catch (error) {
@@ -559,4 +645,20 @@ if (!email || !password) {
 
 
 
+=======
+        university: user.university,
+        college: user.college,
+        studentId: user.studentId,
+      },
+    });
+  } catch (err) {
+    console.error("[ERROR] Login failed:", err.message);
+    res.status(500).json({
+      message: "Internal server error",
+      code: "INTERNAL_SERVER_ERROR",
+    });
+  }
+});
+
+>>>>>>> Stashed changes
 module.exports = router;

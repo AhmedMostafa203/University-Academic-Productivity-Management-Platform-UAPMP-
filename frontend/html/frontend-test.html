@@ -401,6 +401,39 @@
 
       <div class="divider">───</div>
 
+      <!-- LOGIN SECTION -->
+      <h2 style="text-align: center; margin: 20px 0 10px; color: #fff">
+        Login
+      </h2>
+      <div
+        style="
+          background: white;
+          border-radius: 12px;
+          padding: 20px;
+          margin-bottom: 20px;
+        "
+      >
+        <div class="form-group">
+          <label for="loginEmail">Email</label>
+          <input
+            type="email"
+            id="loginEmail"
+            placeholder="e.g., 2024001@std.sci.cu.edu.eg"
+          />
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input
+            type="password"
+            id="loginPassword"
+            placeholder="Your password"
+          />
+        </div>
+        <div class="button-group">
+          <button class="btn-student" onclick="login()">Login</button>
+        </div>
+      </div>
+
       <div class="example-emails">
         <h4>📧 Example Emails:</h4>
         <p><strong>Student:</strong> 2024001@std.sci.cu.edu.eg</p>
@@ -416,10 +449,31 @@
       </div>
     </div>
 
-    <script src="config.js"></script>
+    <script src="../config.js"></script>
     <script>
-      // API Configuration reference
+      // if already authenticated, skip to dashboard automatically
+      (function checkAlreadyLoggedIn() {
+        const token = localStorage.getItem("token");
+        const userJson = localStorage.getItem("user");
+        if (token && userJson) {
+          try {
+            const user = JSON.parse(userJson);
+            const dest =
+              user.role === "student"
+                ? "student-profile.html"
+                : "instructor-dashboard.html";
+            window.location.href = dest;
+          } catch (e) {
+            console.warn("invalid user data, clearing storage", e.message);
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+          }
+        }
+      })();
+
+      // API Configuration references
       const API_URL = API_CONFIG.getRegisterUrl();
+      const LOGIN_URL = API_CONFIG.getLoginUrl();
 
       // Check password strength and show requirements
       function checkPasswordStrength() {
@@ -563,6 +617,44 @@
         } catch (error) {
           showResponse(
             `Error: ${error.message}\n\nMake sure the server is running on http://localhost:5000`,
+            true,
+          );
+        }
+      }
+
+      async function login() {
+        const email = document.getElementById("loginEmail").value.trim();
+        const password = document.getElementById("loginPassword").value;
+
+        if (!email || !password) {
+          showResponse("Email and password are required for login", true);
+          return;
+        }
+
+        try {
+          const response = await fetch(LOGIN_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+          });
+          const data = await response.json();
+          if (response.ok) {
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("user", JSON.stringify(data.user));
+            showResponse("✅ Login successful — redirecting...", false);
+            setTimeout(() => {
+              const dest =
+                data.user.role === "student"
+                  ? "student-profile.html"
+                  : "instructor-dashboard.html";
+              window.location.href = dest;
+            }, 800);
+          } else {
+            showResponse(JSON.stringify(data, null, 2), true);
+          }
+        } catch (err) {
+          showResponse(
+            `Error: ${err.message}\n\nMake sure the server is running on http://localhost:5000`,
             true,
           );
         }
