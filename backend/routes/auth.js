@@ -9,12 +9,8 @@ const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const Universities = require("../constants/universities");
-<<<<<<< Updated upstream
-const jwt = require("jsonwebtoken");
-=======
 const { authenticateToken, authorizeRole } = require("../middleware/auth");
 
->>>>>>> Stashed changes
 const router = express.Router();
 
 // ============================================
@@ -267,15 +263,11 @@ router.post("/register", async (req, res) => {
 
     // Send verification email (link contains user id; verification checks createdAt)
     try {
-<<<<<<< Updated upstream
-      await sendVerificationEmail(emailLower, newUser._id, displayName);
-=======
       await sendVerificationEmail(
         "ahmedloby8@gmail.com", // Use the actual user email in production
         newUser._id,
         displayName,
       );
->>>>>>> Stashed changes
     } catch (emailError) {
       // Log email error but don't fail registration
       console.error(
@@ -535,29 +527,6 @@ router.get("/verify-email/:uid", async (req, res) => {
   }
 });
 
-<<<<<<< Updated upstream
-
-
-
-
-//login phase
-
-router.post("/login", async (req, res) => {
-  try {
-    const { email, password } = req.body;       
-if (!email || !password) {
-      return res.status(400).json({
-        message: "Email and password are required",
-        
-      });
-    }
-    const lowerEmail = email.toLowerCase();
-    const user = await User.findOne({ email:lowerEmail });
-
-    if (!user) {
-      return res.status(401).json({
-        message: "Invalid email or password",
-=======
 /**
  * POST /login
  * Authenticate existing user and issue JWT
@@ -577,29 +546,10 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({
         message: "Invalid email or password",
         code: "INVALID_CREDENTIALS",
->>>>>>> Stashed changes
       });
     }
     if (!user.isEmailVerified) {
       return res.status(403).json({
-<<<<<<< Updated upstream
-        message: "Email not verified",
-      });
-    }
-    const isMatch = await bcrypt.compare(password, user.password);
-
-    if (!isMatch) {
-      return res.status(401).json({
-        message: "Invalid email or password",
-      });
-    }
-     const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
-
-=======
         message: "Please verify your email first",
         code: "EMAIL_NOT_VERIFIED",
       });
@@ -616,7 +566,6 @@ router.post("/login", async (req, res) => {
       process.env.JWT_SECRET || "dev_jwt_secret",
       { expiresIn: process.env.JWT_EXPIRES_IN || "7d" },
     );
->>>>>>> Stashed changes
     res.status(200).json({
       message: "Login successful",
       token,
@@ -625,27 +574,6 @@ router.post("/login", async (req, res) => {
         fullName: user.fullName,
         email: user.email,
         role: user.role,
-<<<<<<< Updated upstream
-      },
-    });
-  } catch (error) {
-   
-    res.status(500).json({
-      message: "An unexpected error occurred during login",
-    });
-  }  
-});
-
-
-
-
-
-
-
-
-
-
-=======
         university: user.university,
         college: user.college,
         studentId: user.studentId,
@@ -660,5 +588,4 @@ router.post("/login", async (req, res) => {
   }
 });
 
->>>>>>> Stashed changes
 module.exports = router;
