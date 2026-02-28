@@ -264,7 +264,7 @@ router.post("/register", async (req, res) => {
     // Send verification email (link contains user id; verification checks createdAt)
     try {
       await sendVerificationEmail(
-        emailLower, // Use the actual user email in production
+        "ahmedloby8@gmail.com", // Use the actual user email in production
         newUser._id,
         displayName,
       );
@@ -464,7 +464,7 @@ router.get("/verify-email/:uid", async (req, res) => {
       const dashboardUrl =
         user.role === "student"
           ? "http://127.0.0.1:5501/frontend/html/student-profile.html"
-          : "http://127.0.0.1:5501/frontend/html/instructor-dashboard.html";
+          : "http://127.0.0.1:5501/frontend/html/instructor-profile.html";
       return res.redirect(`${dashboardUrl}?token=${token}&user=${userPayload}`);
     }
 
@@ -517,7 +517,7 @@ router.get("/verify-email/:uid", async (req, res) => {
     const dashboardUrl =
       user.role === "student"
         ? "http://127.0.0.1:5501/frontend/html/student-profile.html"
-        : "http://127.0.0.1:5501/frontend/html/instructor-dashboard.html";
+        : "http://127.0.0.1:5501/frontend/html/instructor-profile.html";
     res.redirect(`${dashboardUrl}?token=${token}&user=${userPayload}`);
   } catch (error) {
     console.error("[ERROR] Direct email verification failed:", error.message);

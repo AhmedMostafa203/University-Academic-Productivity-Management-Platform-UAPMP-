@@ -461,7 +461,7 @@
             const dest =
               user.role === "student"
                 ? "student-profile.html"
-                : "instructor-dashboard.html";
+                : "instructor-profile.html";
             window.location.href = dest;
           } catch (e) {
             console.warn("invalid user data, clearing storage", e.message);
@@ -646,7 +646,7 @@
               const dest =
                 data.user.role === "student"
                   ? "student-profile.html"
-                  : "instructor-dashboard.html";
+                  : "instructor-profile.html";
               window.location.href = dest;
             }, 800);
           } else {

@@ -3,8 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>UAPMP Student Portal</title>
+    <title>UAPMP Instructor Profile</title>
     <link rel="stylesheet" href="../css/student-profile.css" />
+    <link rel="stylesheet" href="../css/instructor-profile.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
@@ -32,7 +33,7 @@
             </div>
             <div class="logo-text">
               <h1>UAPMP</h1>
-              <span>Student Portal</span>
+              <span>Instructor Portal</span>
             </div>
           </div>
 
@@ -43,8 +44,9 @@
             <a href="#" class="menu-item"
               ><i class="fas fa-book"></i> My Courses</a
             >
-            <a href="#" class="menu-item"><i class="fas fa-tasks"></i> Tasks</a>
-            <a href="#" class="menu-item"><i class="fas fa-star"></i> Grades</a>
+            <a href="#" class="menu-item"
+              ><i class="fas fa-users"></i> Students</a
+            >
             <a href="#" class="menu-item"
               ><i class="fas fa-calendar-alt"></i> Schedule</a
             >
@@ -63,7 +65,6 @@
             />
             <div>
               <p id="sidebarName" class="user-name">Loading...</p>
-              <p id="sidebarId" class="user-id">ID: --</p>
             </div>
           </div>
           <i
@@ -82,7 +83,7 @@
               <i class="fas fa-search"></i>
               <input
                 type="text"
-                placeholder="Search for courses, assignments..."
+                placeholder="Search for courses, students..."
               />
             </div>
             <div class="header-icons">
@@ -107,9 +108,7 @@
             <div class="banner-text">
               <h3 id="welcomeName">Welcome,</h3>
               <p id="facultyText">Faculty • University</p>
-              <div class="banner-badges">
-                <span id="idBadge" class="badge">ID: --</span>
-              </div>
+              <div class="banner-badges"></div>
             </div>
           </div>
           <div class="banner-circle"></div>
@@ -117,6 +116,26 @@
 
         <div class="dashboard-grid">
           <div class="left-col">
+            <!-- Top metrics row -->
+            <div class="metrics-row">
+              <div class="metric-card">
+                <h5>Total Students Enrolled</h5>
+                <div class="metric-value">142</div>
+                <div class="metric-sub">+12% this semester</div>
+              </div>
+              <div class="metric-card">
+                <h5>Pending Grading</h5>
+                <div class="metric-value">28</div>
+                <div class="metric-sub">Needs review</div>
+              </div>
+              <div class="metric-card">
+                <h5>Upcoming Classes Today</h5>
+                <div class="metric-value">2</div>
+                <div class="metric-sub">Next: CS101 in 15m</div>
+              </div>
+            </div>
+
+            <!-- Enrolled classes (cards) matching student structure -->
             <div class="section-header">
               <h4>Enrolled Classes</h4>
               <a href="#">View all</a>
@@ -126,111 +145,105 @@
                 <div class="card-header blue-bg"><span>CS101</span></div>
                 <div class="card-body">
                   <h5>Intro to Algorithms</h5>
-                  <p class="prof">Prof. Alan Turing</p>
+                  <p class="prof">Prof. You</p>
                   <p class="time">
-                    <i class="far fa-clock"></i> Mon/Wed • 10:00 AM
+                    <i class="far fa-clock"></i> Mon, Wed • 10:00 AM - 11:30 AM
                   </p>
                   <button class="btn-details">View Details</button>
                 </div>
               </div>
               <div class="class-card">
-                <div class="card-header green-bg"><span>MATH202</span></div>
+                <div class="card-header purple-bg"><span>DS202</span></div>
                 <div class="card-body">
-                  <h5>Linear Algebra</h5>
-                  <p class="prof">Prof. Katherine Johnson</p>
+                  <h5>Data Structures</h5>
+                  <p class="prof">Prof. You</p>
                   <p class="time">
-                    <i class="far fa-clock"></i> Tue/Thu • 2:00 PM
+                    <i class="far fa-clock"></i> Tue, Thu • 02:00 PM - 03:30 PM
                   </p>
                   <button class="btn-details">View Details</button>
                 </div>
               </div>
             </div>
 
-            <div class="recent-grades">
-              <div class="section-header">
-                <h4>Recent Grades</h4>
-                <i class="fas fa-ellipsis-h"></i>
+            <!-- statistics row for instructor overview -->
+            <div class="stats-row">
+              <div class="stat-card side-card">
+                <div class="circular-progress" data-percent="92">
+                  <svg width="80" height="80">
+                    <circle class="bg" cx="40" cy="40" r="35"></circle>
+                    <circle
+                      class="prog"
+                      cx="40"
+                      cy="40"
+                      r="35"
+                      stroke-dasharray="0,220"
+                    ></circle>
+                  </svg>
+                  <span class="percentage">92%</span>
+                </div>
+                <h5>Overall Attendance</h5>
+                <p>CS101: 92%</p>
+                <p>DS202: 88%</p>
               </div>
-              <table class="grades-table">
-                <thead>
-                  <tr>
-                    <th>COURSE</th>
-                    <th>ASSESSMENT</th>
-                    <th>DATE</th>
-                    <th>SCORE</th>
-                    <th>GRADE</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><strong>CS101</strong></td>
-                    <td>Midterm Exam</td>
-                    <td>Oct 15, 2023</td>
-                    <td><strong>88/100</strong></td>
-                    <td><span class="grade-tag b-plus">B+</span></td>
-                  </tr>
-                  <tr>
-                    <td><strong>MATH202</strong></td>
-                    <td>Quiz 3: Vectors</td>
-                    <td>Oct 12, 2023</td>
-                    <td><strong>10/10</strong></td>
-                    <td><span class="grade-tag a-grade">A</span></td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="stat-card side-card">
+                <div class="circular-progress green" data-percent="79">
+                  <svg width="80" height="80">
+                    <circle class="bg" cx="40" cy="40" r="35"></circle>
+                    <circle
+                      class="prog"
+                      cx="40"
+                      cy="40"
+                      r="35"
+                      stroke-dasharray="0,220"
+                    ></circle>
+                  </svg>
+                  <span class="percentage">79%</span>
+                </div>
+                <h5>Average Grade</h5>
+                <p>CS101: B+</p>
+                <p>DS202: A-</p>
+              </div>
             </div>
           </div>
 
           <div class="right-col">
-            <div class="side-card tasks">
-              <div class="section-header">
-                <h4>Pending Tasks</h4>
-                <i class="fas fa-plus add-task"></i>
-              </div>
-              <div class="task-item">
-                <input type="checkbox" />
-                <div class="task-info">
-                  <p>Submit Algorithm Project</p>
-                  <span class="priority high">HIGH</span>
-                  <span class="type">COURSE</span>
+            <!-- Attendance card (large) -->
+            <div class="side-card attendance-card">
+              <h4>Attendance</h4>
+              <div class="attendance-main">
+                <div class="attendance-info">
+                  <h5>CS101 Session Active</h5>
+                  <p>Room 304 • Ends in 45m</p>
+                  <button class="btn-primary">Start Attendance</button>
                 </div>
-              </div>
-              <div class="task-item">
-                <input type="checkbox" />
-                <div class="task-info">
-                  <p>Register for next semester</p>
-                  <span class="priority medium">MEDIUM</span>
-                  <span class="type">PERSONAL</span>
-                </div>
-              </div>
-              <div class="task-item">
-                <input type="checkbox" />
-                <div class="task-info">
-                  <p>Return Library Book</p>
-                  <span class="priority low">LOW</span>
-                  <span class="type">PERSONAL</span>
+                <div class="attendance-stats">
+                  <div class="percent">42/50 Checked In</div>
+                  <div class="mini-progress"></div>
                 </div>
               </div>
             </div>
 
-            <div class="side-card attendance">
-              <h4>Attendance</h4>
-              <div class="attendance-content">
-                <div class="circular-progress">
-                  <svg width="80" height="80">
-                    <circle class="bg" cx="40" cy="40" r="35"></circle>
-                    <circle class="prog" cx="40" cy="40" r="35"></circle>
-                  </svg>
-                  <span class="percentage">92%</span>
-                </div>
-                <div class="attendance-text">
-                  <h5>Overall Attendance</h5>
+            <!-- Recent activity / notifications -->
+            <div class="side-card recent-activity-card">
+              <h4>Recent Activity</h4>
+              <ul class="recent-list">
+                <li>
+                  <strong>New question in CS101 Forum</strong>
                   <p>
-                    You missed <span class="red">3 classes</span> this semester.
+                    "Professor, regarding the recursive function..." • 10 mins
+                    ago
                   </p>
-                  <p class="trend">📈 +2% from last month</p>
-                </div>
-              </div>
+                </li>
+                <li>
+                  <strong>Assignment 3 Submission</strong>
+                  <p>5 students submitted late • 1 hour ago</p>
+                </li>
+                <li>
+                  <strong>Grades Published</strong>
+                  <p>Midterm results are now live • Yesterday</p>
+                </li>
+              </ul>
+              <a href="#" class="view-all">View All Notifications</a>
             </div>
           </div>
         </div>
@@ -289,7 +302,7 @@
         } catch (e) {}
       })();
 
-      // ensure user is logged in and has student role
+      // ensure user is logged in and has instructor role
       (function guard() {
         const token = localStorage.getItem("token");
         const userJson = localStorage.getItem("user");
@@ -300,11 +313,11 @@
         }
         try {
           const user = JSON.parse(userJson);
-          if (user.role !== "student") {
+          if (user.role !== "instructor") {
             // wrong dashboard
             window.location.href =
-              user.role === "instructor"
-                ? "instructor-profile.html"
+              user.role === "student"
+                ? "student-profile.html"
                 : "frontend-test.html";
             return;
           }
@@ -348,12 +361,10 @@
         try {
           const user = JSON.parse(userJson);
           const name = user.fullName || "";
-          const id = user.studentId || user.id || "--";
           const faculty = user.college || "";
           const university = user.university || "";
           // update sidebar
           document.getElementById("sidebarName").textContent = name;
-          document.getElementById("sidebarId").textContent = `ID: ${id}`;
           // avatars
           const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(
             name,
@@ -374,7 +385,6 @@
             faculty && university
               ? `${faculty} • ${university}`
               : university || faculty;
-          document.getElementById("idBadge").textContent = `ID: ${id}`;
         } catch (e) {
           console.error("Failed to parse user data for profile:", e);
         }
@@ -386,6 +396,19 @@
         localStorage.removeItem("user");
         window.location.href = "frontend-test.html";
       });
+
+      // initialize stat circles using same logic as attendance
+      (function initStatCircleProgress() {
+        document.querySelectorAll(".circular-progress").forEach((el) => {
+          const pct = parseFloat(el.getAttribute("data-percent")) || 0;
+          const prog = el.querySelector(".prog");
+          if (prog) {
+            const circumference = 2 * Math.PI * 35; // r=35
+            prog.style.strokeDasharray = circumference;
+            prog.style.strokeDashoffset = circumference * (1 - pct / 100);
+          }
+        });
+      })();
     </script>
   </body>
 </html>
