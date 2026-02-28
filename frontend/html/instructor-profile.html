@@ -308,7 +308,7 @@
         const userJson = localStorage.getItem("user");
         if (!token || !userJson) {
           // not authenticated
-          window.location.href = "frontend-test.html";
+          window.location.href = "signin.html";
           return;
         }
         try {
@@ -316,9 +316,7 @@
           if (user.role !== "instructor") {
             // wrong dashboard
             window.location.href =
-              user.role === "student"
-                ? "student-profile.html"
-                : "frontend-test.html";
+              user.role === "student" ? "student-profile.html" : "signin.html";
             return;
           }
 
@@ -345,12 +343,12 @@
               // Token is invalid/expired, clear and redirect to login
               localStorage.removeItem("token");
               localStorage.removeItem("user");
-              window.location.href = "frontend-test.html";
+              window.location.href = "signin.html";
             });
         } catch {
           localStorage.removeItem("token");
           localStorage.removeItem("user");
-          window.location.href = "frontend-test.html";
+          window.location.href = "signin.html";
         }
       })();
 
@@ -394,7 +392,7 @@
       document.getElementById("logoutBtn").addEventListener("click", () => {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
-        window.location.href = "frontend-test.html";
+        window.location.href = "signin.html";
       });
 
       // initialize stat circles using same logic as attendance
