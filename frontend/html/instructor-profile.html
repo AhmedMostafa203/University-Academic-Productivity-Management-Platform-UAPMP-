@@ -307,49 +307,49 @@
         const token = localStorage.getItem("token");
         const userJson = localStorage.getItem("user");
         if (!token || !userJson) {
-          // not authenticated
-          window.location.href = "signin.html";
-          return;
-        }
-        try {
-          const user = JSON.parse(userJson);
-          if (user.role !== "instructor") {
-            // wrong dashboard
-            window.location.href =
-              user.role === "student" ? "student-profile.html" : "signin.html";
-            return;
-          }
-
-          // Verify token with backend
-          fetch(API_CONFIG.BASE_URL + "/api/auth/me", {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          })
-            .then((res) => {
-              if (!res.ok) {
-                throw new Error("Token verification failed");
-              }
-              return res.json();
-            })
-            .then((data) => {
-              // Token is valid, update localStorage with fresh user data
-              localStorage.setItem("user", JSON.stringify(data.user));
-            })
-            .catch((err) => {
-              console.warn("Token verification failed:", err.message);
-              // Token is invalid/expired, clear and redirect to login
-              localStorage.removeItem("token");
-              localStorage.removeItem("user");
-              window.location.href = "signin.html";
-            });
-        } catch {
           localStorage.removeItem("token");
           localStorage.removeItem("user");
           window.location.href = "signin.html";
+          return;
         }
+        let user;
+        try {
+          user = JSON.parse(userJson);
+        } catch (e) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          window.location.href = "signin.html";
+          return;
+        }
+        if (!user.role || user.role !== "instructor") {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          window.location.href = "signin.html";
+          return;
+        }
+        // Verify token with backend
+        fetch(API_CONFIG.BASE_URL + "/api/auth/me", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        })
+          .then((res) => {
+            if (!res.ok) {
+              throw new Error("Token verification failed");
+            }
+            return res.json();
+          })
+          .then((data) => {
+            // Token is valid, update localStorage with fresh user data
+            localStorage.setItem("user", JSON.stringify(data.user));
+          })
+          .catch((err) => {
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            window.location.href = "signin.html";
+          });
       })();
 
       // populate dynamic user data after guard

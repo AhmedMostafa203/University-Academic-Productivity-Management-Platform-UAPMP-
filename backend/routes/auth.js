@@ -219,6 +219,7 @@ router.post("/register", async (req, res) => {
     let university = null;
     let college = null;
 
+
     // Extract faculty, university, role, and student ID from email
     try {
       const emailData = extractUserDataFromEmail(emailLower);
@@ -226,6 +227,14 @@ router.post("/register", async (req, res) => {
       university = emailData.university;
       college = emailData.faculty;
       studentId = emailData.studentId;
+
+      // Prevent registration of admin and super_admin
+      if (role === "admin" || role === "super_admin") {
+        return res.status(403).json({
+          message: "Registration for admin and super_admin is not allowed.",
+          code: "FORBIDDEN_ROLE_REGISTRATION",
+        });
+      }
 
       // Add "Dr." prefix to instructor name if not already present
       if (
@@ -679,16 +688,30 @@ router.post("/google-login", async (req, res) => {
       });
     }
 
-    // Verify that email is from a supported university
+    // If the user is admin or super_admin, do not apply any email domain constraints
     let emailData;
-    try {
-      emailData = extractUserDataFromEmail(email);
-    } catch (emailError) {
-      return res.status(403).json({
-        message: "Google account email must be from a supported university",
-        code: "UNSUPPORTED_UNIVERSITY_EMAIL",
-        details: emailError.message,
-      });
+    let isAdminGoogle = false;
+    // Detect admin or super_admin by email (customize as needed)
+    // Here, if the email is already in the database as admin/super_admin, allow login with any domain
+    let existingUser = await User.findOne({ email });
+    if (existingUser && (existingUser.role === 'admin' || existingUser.role === 'super_admin')) {
+      emailData = {
+        role: existingUser.role,
+        university: existingUser.university || 'N/A',
+        faculty: existingUser.college || 'N/A',
+        studentId: existingUser.studentId || null,
+      };
+      isAdminGoogle = true;
+    } else {
+      try {
+        emailData = extractUserDataFromEmail(email);
+      } catch (emailError) {
+        return res.status(403).json({
+          message: "Google account email must be from a supported university",
+          code: "UNSUPPORTED_UNIVERSITY_EMAIL",
+          details: emailError.message,
+        });
+      }
     }
 
     // Check if user with this email already exists

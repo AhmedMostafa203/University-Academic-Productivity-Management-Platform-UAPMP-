@@ -9,6 +9,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 const authRoutes = require("./routes/auth");
+const announcementRoutes = require("./routes/announcement");
 
 const app = express();
 
@@ -36,6 +37,8 @@ app.use(express.json());
 // ============================================
 // Mount authentication routes at /api/auth endpoint
 app.use("/api/auth", authRoutes);
+// Mount announcement routes at /api/announcements endpoint
+app.use("/api/announcements", announcementRoutes);
 
 // ============================================
 // DATABASE CONNECTION & SERVER INITIALIZATION

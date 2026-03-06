@@ -32,10 +32,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: false, // Optional for Google users
     },
-    // User role: either 'student' or 'instructor'
+    // User role: 'student', 'instructor', 'admin', or 'super_admin'
     role: {
       type: String,
-      enum: ["student", "instructor"],
+      enum: ["student", "instructor", "admin", "super_admin"],
       required: true,
     },
     // University domain (e.g., 'cu.edu.eg' for Cairo University)

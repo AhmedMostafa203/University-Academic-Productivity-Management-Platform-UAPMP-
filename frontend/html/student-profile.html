@@ -86,7 +86,11 @@
               />
             </div>
             <div class="header-icons">
-              <i class="far fa-bell"></i>
+              <i
+                class="far fa-bell"
+                id="announcementsBell"
+                style="cursor: pointer"
+              ></i>
               <i class="far fa-moon" id="themeToggle"></i>
               <img
                 id="topAvatar"
@@ -96,6 +100,12 @@
             </div>
           </div>
         </header>
+
+        <script>
+          document.getElementById("announcementsBell").onclick = function () {
+            window.location.href = "student-announcements.html";
+          };
+        </script>
 
         <section class="welcome-banner">
           <div class="banner-content">

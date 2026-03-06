@@ -239,10 +239,14 @@
         if (token && userJson) {
           try {
             const user = JSON.parse(userJson);
-            const dest =
-              user.role === "student"
-                ? "student-profile.html"
-                : "instructor-profile.html";
+            let dest;
+            if (user.role === "admin" || user.role === "super_admin") {
+              dest = "admin-dashboard.html";
+            } else if (user.role === "student") {
+              dest = "student-profile.html";
+            } else {
+              dest = "instructor-profile.html";
+            }
             window.location.href = dest;
           } catch (e) {
             localStorage.removeItem("token");
@@ -340,11 +344,15 @@
 
               // Redirect to appropriate dashboard after successful Google login
               setTimeout(() => {
-                const dest =
-                  data.user &&
-                  (data.user.role === "student" || data.user.role === "Student")
-                    ? "student-profile.html"
-                    : "instructor-profile.html";
+                const role = (data.user.role || "").toLowerCase();
+                let dest;
+                if (role === "admin" || role === "super_admin") {
+                  dest = "admin-dashboard.html";
+                } else if (role === "student") {
+                  dest = "student-profile.html";
+                } else {
+                  dest = "instructor-profile.html";
+                }
                 window.location.href = dest;
               }, 1000);
             }
@@ -393,18 +401,20 @@
             body: JSON.stringify({ email, password }),
           });
           const data = await res.json();
-          if (res.ok) {
-            localStorage.setItem("token", data.token || "");
-            localStorage.setItem(
-              "user",
-              JSON.stringify(data.user || { role: "student" }),
-            );
+          if (res.ok && data.user && data.token) {
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("user", JSON.stringify(data.user));
             showResponse("✅ Login successful — redirecting...", false);
             setTimeout(() => {
-              const dest =
-                data.user && data.user.role === "student"
-                  ? "student-profile.html"
-                  : "instructor-profile.html";
+              const role = (data.user.role || "").toLowerCase();
+              let dest;
+              if (role === "admin" || role === "super_admin") {
+                dest = "admin-dashboard.html";
+              } else if (role === "student") {
+                dest = "student-profile.html";
+              } else {
+                dest = "instructor-profile.html";
+              }
               window.location.href = dest;
             }, 800);
           } else {

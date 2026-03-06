@@ -550,6 +550,11 @@
             setTimeout(() => {
               window.location.href = "signin.html";
             }, 900);
+          } else if (data.code === "FORBIDDEN_ROLE_REGISTRATION") {
+            showResponse(
+              "Registration for admin and super_admin is not allowed.",
+              true,
+            );
           } else {
             showResponse(
               "Error: " + (data.message || "Registration failed"),
