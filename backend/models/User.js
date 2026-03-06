@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema(
     // Hashed password (bcrypt with salt 10)
     password: {
       type: String,
-      required: true,
+      required: false, // Optional for Google users
     },
     // User role: either 'student' or 'instructor'
     role: {
@@ -52,6 +52,23 @@ const userSchema = new mongoose.Schema(
     isEmailVerified: {
       type: Boolean,
       default: false,
+    },
+    // Profile completion status (for Google OAuth signups)
+    isProfileComplete: {
+      type: Boolean,
+      default: true, // Default true for email/password signups
+    },
+    // Google OAuth ID (for Google accounts)
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
+    // Authentication provider: 'local' (email/password) or 'google'
+    authProvider: {
+      type: String,
+      enum: ["local", "google"],
+      default: "local",
     },
   },
   // Enable automatic createdAt and updatedAt timestamps

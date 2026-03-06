@@ -7,6 +7,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
+const { OAuth2Client } = require("google-auth-library");
 const User = require("../models/User");
 const Universities = require("../constants/universities");
 const { authenticateToken, authorizeRole } = require("../middleware/auth");
@@ -116,7 +117,6 @@ const getEmailTransporter = () => {
 
 /**
  * Sends email verification link to user
- * Uses the user id in the link and relies on the user's `createdAt` timestamp
  * @param {string} email - User's email address
  * @param {string} userId - User's database id
  * @param {string} userName - User's full name
@@ -124,7 +124,7 @@ const getEmailTransporter = () => {
  */
 const sendVerificationEmail = async (email, userId, userName) => {
   const verificationUrl = `${process.env.BACKEND_URL || "http://localhost:5000"}/api/auth/verify-email/${userId}`;
-  // Always send email via Nodemailer (ensure SMTP env vars are set)
+
   const transporter = getEmailTransporter();
   const mailOptions = {
     from: process.env.EMAIL_FROM || '"UAPMP Support" <noreply@uapmp.edu.eg>',
@@ -143,7 +143,12 @@ const sendVerificationEmail = async (email, userId, userName) => {
       <p>If you did not register for UAPMP, please ignore this email.</p>
     `,
   };
-  return await transporter.sendMail(mailOptions);
+  try {
+    const result = await transporter.sendMail(mailOptions);
+    return result;
+  } catch (error) {
+    throw error;
+  }
 };
 
 // ============================================
@@ -263,11 +268,7 @@ router.post("/register", async (req, res) => {
 
     // Send verification email (link contains user id; verification checks createdAt)
     try {
-      await sendVerificationEmail(
-        emailLower, // Use the actual user email in production
-        newUser._id,
-        displayName,
-      );
+      await sendVerificationEmail(emailLower, newUser._id, displayName);
     } catch (emailError) {
       // Log email error but don't fail registration
       console.error(
@@ -627,6 +628,269 @@ router.get("/me", authenticateToken, async (req, res) => {
     res.status(401).json({
       message: "Invalid or expired token",
       code: "INVALID_TOKEN",
+    });
+  }
+});
+
+/**
+ * POST /google-login
+ * Authenticate user with Google OAuth - accepts Google ID token
+ * Creates new user for profile completion or logs in existing user
+ * Token contains user's Google account info and university email
+ */
+router.post("/google-login", async (req, res) => {
+  try {
+    const { token: idToken } = req.body;
+
+    if (!idToken) {
+      return res.status(400).json({
+        message: "Google ID token is required",
+        code: "MISSING_TOKEN",
+      });
+    }
+
+    // Verify Google token and extract user information
+    const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+    let payload;
+    try {
+      const ticket = await client.verifyIdToken({
+        idToken: idToken,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+      payload = ticket.getPayload();
+    } catch (err) {
+      console.error("[ERROR] Google token verification failed:", err.message);
+      return res.status(401).json({
+        message: "Invalid Google token",
+        code: "INVALID_GOOGLE_TOKEN",
+      });
+    }
+
+    // Extract email from Google payload
+    const email = payload.email ? payload.email.toLowerCase() : null;
+    const googleId = payload.sub; // Google's unique user ID
+    const googleName = payload.name || "User";
+
+    if (!email) {
+      return res.status(400).json({
+        message: "Email not found in Google account",
+        code: "NO_EMAIL_IN_GOOGLE",
+      });
+    }
+
+    // Verify that email is from a supported university
+    let emailData;
+    try {
+      emailData = extractUserDataFromEmail(email);
+    } catch (emailError) {
+      return res.status(403).json({
+        message: "Google account email must be from a supported university",
+        code: "UNSUPPORTED_UNIVERSITY_EMAIL",
+        details: emailError.message,
+      });
+    }
+
+    // Check if user with this email already exists
+    let user = await User.findOne({ email });
+
+    if (user) {
+      // User exists
+      if (user.authProvider === "local") {
+        // Local account exists - link Google to it but require password to confirm
+        user.googleId = googleId;
+        await user.save();
+        // ...existing code...
+      } else if (user.authProvider === "google") {
+        // Already a Google account - update googleId if different
+        if (user.googleId !== googleId) {
+          user.googleId = googleId;
+          await user.save();
+        }
+      }
+
+      // If profile is complete, user can login directly
+      if (user.isProfileComplete) {
+        const jwtToken = jwt.sign(
+          { id: user._id, role: user.role, email: user.email },
+          process.env.JWT_SECRET || "dev_jwt_secret",
+          { expiresIn: process.env.JWT_EXPIRES_IN || "7d" },
+        );
+
+        return res.status(200).json({
+          message: "Google login successful",
+          code: "GOOGLE_LOGIN_SUCCESS",
+          needsProfileCompletion: false,
+          token: jwtToken,
+          user: {
+            id: user._id,
+            fullName: user.fullName,
+            email: user.email,
+            role: user.role,
+            university: user.university,
+            college: user.college,
+            studentId: user.studentId,
+          },
+        });
+      } else {
+        // Profile incomplete - needs profile completion (for Google users only)
+        const tempToken = jwt.sign(
+          { id: user._id, email: user.email },
+          process.env.JWT_SECRET || "dev_jwt_secret",
+          { expiresIn: "1h" },
+        );
+
+        return res.status(202).json({
+          message: "Please complete your profile",
+          code: "PROFILE_INCOMPLETE",
+          needsProfileCompletion: true,
+          token: tempToken,
+          user: {
+            id: user._id,
+            fullName: user.fullName,
+            email: user.email,
+            role: user.role,
+            university: user.university,
+            college: user.college,
+            studentId: user.studentId,
+          },
+        });
+      }
+    } else {
+      // Create new Google user - password will be set in profile completion
+      // NULL password indicates incomplete profile
+      user = await User.create({
+        fullName: googleName,
+        email: email,
+        password: null, // No password until profile completion
+        googleId: googleId,
+        authProvider: "google",
+        role: emailData.role,
+        university: emailData.university,
+        college: emailData.faculty,
+        studentId: emailData.studentId,
+        isEmailVerified: true, // Google verified the email
+        isProfileComplete: false, // Mark as incomplete
+      });
+
+      console.log(`[INFO] New Google user created: ${email}`);
+
+      // Return temporary token for profile completion
+      const tempToken = jwt.sign(
+        { id: user._id, email: user.email },
+        process.env.JWT_SECRET || "dev_jwt_secret",
+        { expiresIn: "1h" },
+      );
+
+      return res.status(201).json({
+        message: "Please complete your profile to finish signup",
+        code: "PROFILE_INCOMPLETE",
+        needsProfileCompletion: true,
+        token: tempToken,
+        user: {
+          id: user._id,
+          fullName: user.fullName,
+          email: user.email,
+          role: user.role,
+          university: user.university,
+          college: user.college,
+          studentId: user.studentId,
+        },
+      });
+    }
+  } catch (error) {
+    console.error("[ERROR] Google login failed:", error.message);
+    res.status(500).json({
+      message: "An error occurred during Google login",
+      code: "GOOGLE_LOGIN_ERROR",
+    });
+  }
+});
+
+/**
+ * POST /complete-profile
+ * Complete user profile after Google OAuth signup
+ * Updates user name, sets password, and marks profile as complete
+ */
+router.post("/complete-profile", authenticateToken, async (req, res) => {
+  try {
+    const { fullName, password, confirmPassword } = req.body;
+    const userId = req.user.id;
+    if (!fullName || fullName.trim().length < 2) {
+      return res.status(400).json({
+        message: "Full name is required and must be at least 2 characters",
+        code: "INVALID_NAME",
+      });
+    }
+    if (!password) {
+      return res.status(400).json({
+        message: "Password is required",
+        code: "PASSWORD_REQUIRED",
+      });
+    }
+    if (password !== confirmPassword) {
+      return res.status(400).json({
+        message: "Password confirmation does not match",
+        code: "PASSWORD_MISMATCH",
+      });
+    }
+    const { isStrong, requirements } = validatePasswordStrength(password);
+    if (!isStrong) {
+      return res.status(400).json({
+        message: "Password does not meet security requirements",
+        code: "WEAK_PASSWORD",
+        requirements: requirements,
+      });
+    }
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        code: "USER_NOT_FOUND",
+      });
+    }
+    if (user.isProfileComplete) {
+      return res.status(400).json({
+        message: "Profile is already complete",
+        code: "PROFILE_ALREADY_COMPLETE",
+      });
+    }
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    let displayName = fullName.trim();
+    if (user.role === "instructor" && !displayName.startsWith("Dr.")) {
+      displayName = "Dr. " + displayName;
+    }
+    user.fullName = displayName;
+    user.password = hashedPassword;
+    user.isProfileComplete = true;
+    await user.save();
+    const jwtToken = jwt.sign(
+      { id: user._id, role: user.role, email: user.email },
+      process.env.JWT_SECRET || "dev_jwt_secret",
+      { expiresIn: process.env.JWT_EXPIRES_IN || "7d" },
+    );
+    res.status(200).json({
+      message: "Profile completed successfully",
+      code: "PROFILE_COMPLETED",
+      token: jwtToken,
+      user: {
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        role: user.role,
+        university: user.university,
+        college: user.college,
+        studentId: user.studentId,
+        authProvider: user.authProvider,
+        isProfileComplete: true,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "An error occurred during profile completion",
+      code: "PROFILE_COMPLETION_ERROR",
+      details: error.message,
     });
   }
 });

@@ -3,7 +3,7 @@
  * Main entry point for the application
  */
 
-require("dotenv").config();
+require("dotenv").config({ path: __dirname + "/../config/.env" }); // Load environment variables from .env file in config directory
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");

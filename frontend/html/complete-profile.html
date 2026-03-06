@@ -3,24 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Sign Up - UAPMP</title>
+    <title>Complete Your Profile - UAPMP</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google SDK for OAuth -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="../config.js"></script>
     <style>
-      #googleSignupBtn {
-        display: flex;
-        justify-content: center;
-        padding: 0.5rem 0;
-      }
-      #googleSignupBtn > div {
-        width: 100% !important;
-        max-width: 100% !important;
-      }
-      #googleSignupBtn iframe {
-        width: 100% !important;
-      }
-
       /* Simple professional background with logo colors */
       body {
         background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
@@ -142,54 +128,40 @@
       </div>
     </header>
 
-    <main class="min-h-screen flex items-center justify-center pt-20">
-      <div class="w-full max-w-xl px-4">
-        <div class="form-box rounded-xl shadow-lg p-8">
-          <div class="flex flex-col items-center gap-3 mb-6">
-            <p class="text-gray-800 text-3xl font-bold">
-              Create your academic account
-            </p>
-            <p class="text-gray-400 text-sm">
-              Join UAPMP to manage your courses and grades
+    <main class="pt-20 pb-8">
+      <div class="max-w-lg mx-auto px-6 sm:px-10">
+        <div class="form-box rounded-xl shadow-lg p-8 border border-gray-100">
+          <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-center text-gray-800 mb-2">
+              Complete Your Profile
+            </h1>
+            <p class="text-center text-gray-500 text-sm mb-6">
+              Welcome! Please provide your full name and create a password to
+              complete your account setup.
             </p>
           </div>
 
-          <form
-            id="signupForm"
-            class="space-y-4"
-            onsubmit="handleRegister(event)"
-          >
+          <form id="completeProfileForm" class="space-y-8">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1"
-                >Full Name</label
+                >Full Name <span class="text-red-500">*</span></label
               >
               <input
                 type="text"
                 id="fullName"
                 name="fullName"
-                placeholder="Full Name"
+                placeholder="Enter your full name"
                 required
-                class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+              <p class="text-xs text-gray-500 mt-1">
+                This will be displayed on your profile
+              </p>
             </div>
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1"
-                >University Email</label
-              >
-              <input
-                type="email"
-                id="email"
-                name="email"
-                placeholder="student@university.edu"
-                required
-                class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1"
-                >Password</label
+                >Password <span class="text-red-500">*</span></label
               >
               <input
                 type="password"
@@ -197,10 +169,9 @@
                 name="password"
                 placeholder="Minimum 6 characters"
                 required
-                class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 oninput="checkPasswordStrength()"
               />
-
               <div
                 id="passwordRequirements"
                 class="password-requirements mt-2 hidden bg-gray-50 p-3 rounded border border-gray-200"
@@ -225,62 +196,35 @@
                 <div class="mt-2 h-1 bg-gray-200 rounded overflow-hidden">
                   <div
                     id="strengthFill"
-                    class="h-full w-0 bg-red-500 transition-all"
+                    class="h-full w-0 bg-blue-600 transition-all"
                   ></div>
                 </div>
               </div>
             </div>
-
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1"
-                >Confirm Password</label
+                >Confirm Password <span class="text-red-500">*</span></label
               >
               <input
                 type="password"
                 id="confirmPassword"
                 name="confirmPassword"
-                placeholder="Confirm Password"
+                placeholder="Confirm your password"
                 required
-                class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+              <p class="text-xs text-gray-500 mt-1">
+                Re-enter your password to confirm
+              </p>
             </div>
 
             <button
               type="submit"
-              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg"
+              class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700"
             >
-              Sign up
+              Complete Profile
             </button>
-
-            <!-- Google OAuth Button -->
-            <div id="googleSignupBtn" class="flex justify-center py-2"></div>
-
-            <div
-              class="mt-4 flex items-center justify-center gap-3 text-xs text-gray-500"
-            >
-              <span class="h-px w-16 bg-gray-300"></span>
-              <span
-                >Already have an account?
-                <a href="signin.html" class="text-blue-600 hover:underline"
-                  >Sign in</a
-                ></span
-              >
-              <span class="h-px w-16 bg-gray-300"></span>
-            </div>
           </form>
-
-          <div class="mt-4 text-sm text-gray-500">
-            <p>
-              Example student email:
-              <code class="bg-gray-100 px-1 rounded"
-                >2024001@std.sci.cu.edu.eg</code
-              >
-            </p>
-            <p>
-              Example instructor email:
-              <code class="bg-gray-100 px-1 rounded">khan@sci.cu.edu.eg</code>
-            </p>
-          </div>
 
           <div
             id="responseContainer"
@@ -300,137 +244,22 @@
 
     <script>
       (function () {
-        const token = localStorage.getItem("token");
-        const userJson = localStorage.getItem("user");
-        if (token && userJson) {
-          try {
-            const user = JSON.parse(userJson);
-            const dest =
-              user.role === "student"
-                ? "student-profile.html"
-                : "instructor-profile.html";
-            window.location.href = dest;
-          } catch (e) {
-            localStorage.removeItem("token");
-            localStorage.removeItem("user");
-          }
-        }
-      })();
+        // Check for token in URL or localStorage
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get("token") || localStorage.getItem("token");
 
-      const REGISTER_URL = "http://localhost:5000/api/auth/register";
-      const GOOGLE_LOGIN_URL = "http://localhost:5000/api/auth/google-login";
-      const GOOGLE_CLIENT_ID =
-        "303955489135-58iqib3ca385os26p7r7ghgufo9q3si2.apps.googleusercontent.com";
-
-      /**
-       * Initialize Google Sign-In button - render once on page load
-       */
-      function initGoogleSignUp() {
-        // Initialize Google Sign-In with explicit callback
-        if (window.google && window.google.accounts) {
-          window.google.accounts.id.initialize({
-            client_id: GOOGLE_CLIENT_ID,
-            callback: handleGoogleResponse,
-            auto_select: false,
-          });
-
-          // Render Google's official button - ONCE, on initialization
-          // This button handles all click events automatically
-          window.google.accounts.id.renderButton(
-            document.getElementById("googleSignupBtn"),
-            {
-              type: "standard",
-              theme: "outline",
-              size: "large",
-              text: "signup_with",
-              locale: "en_US", // Force English US
-            },
-          );
-        } else {
-          console.error(
-            "[ERROR] Google SDK not loaded. Make sure https://accounts.google.com/gsi/client is in <head>",
-          );
-        }
-      }
-
-      /**
-       * Handle Google OAuth token response
-       * Called when user successfully authenticates with Google
-       * @param {Object} response - Google response containing the ID token
-       */
-      async function handleGoogleResponse(response) {
-        if (!response.credential) {
-          showResponse("Failed to get Google authentication token", true);
+        if (!token) {
+          // No token found, redirect to signin
+          window.location.href = "signin.html";
           return;
         }
 
-        const idToken = response.credential;
+        // Store token temporarily
+        localStorage.setItem("temp_token", token);
+      })();
 
-        try {
-          showResponse("Authenticating with Google...", false);
-
-          // Send Google ID token to backend for verification and user creation/linking
-          const res = await fetch(GOOGLE_LOGIN_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ token: idToken }),
-          });
-
-          const data = await res.json();
-
-          if (res.ok) {
-            // Check if profile completion is needed (new Google signup)
-            if (data.needsProfileCompletion) {
-              // Store temporary token for profile completion
-              localStorage.setItem("temp_token", data.token);
-
-              showResponse(
-                "✅ Google signup successful — completing profile...",
-                false,
-              );
-
-              // Redirect to profile completion page
-              setTimeout(() => {
-                window.location.href =
-                  "complete-profile.html?token=" + data.token;
-              }, 1000);
-            } else {
-              // Store JWT token and user info from backend
-              localStorage.setItem("token", data.token || "");
-              localStorage.setItem("user", JSON.stringify(data.user || {}));
-
-              showResponse(
-                "✅ Google authentication successful — redirecting...",
-                false,
-              );
-
-              // Redirect to appropriate dashboard after successful Google login
-              setTimeout(() => {
-                const dest =
-                  data.user &&
-                  (data.user.role === "student" || data.user.role === "Student")
-                    ? "student-profile.html"
-                    : "instructor-profile.html";
-                window.location.href = dest;
-              }, 1000);
-            }
-          } else {
-            showResponse(
-              "Error: " + (data.message || "Google authentication failed"),
-              true,
-            );
-          }
-        } catch (err) {
-          console.error("Google login error:", err);
-          showResponse(
-            "Server error — ensure backend is running on http://localhost:5000",
-            true,
-          );
-        }
-      }
-
-      // Initialize Google Sign-In when page loads
-      window.addEventListener("load", initGoogleSignUp);
+      const COMPLETE_PROFILE_URL =
+        "http://localhost:5000/api/auth/complete-profile";
 
       function updateRequirement(id, met) {
         const el = document.getElementById(id);
@@ -486,6 +315,100 @@
         updateStrengthFill(met);
       }
 
+      async function handleCompleteProfile(e) {
+        e.preventDefault();
+        const form = document.getElementById("completeProfileForm");
+        const fullName = form.fullName.value.trim();
+        const password = form.password.value.trim();
+        const confirmPassword = form.confirmPassword.value.trim();
+
+        if (!fullName) {
+          showResponse("Full name is required", true);
+          return;
+        }
+        if (fullName.length < 2) {
+          showResponse("Full name must be at least 2 characters", true);
+          return;
+        }
+        if (!password) {
+          showResponse("Password is required", true);
+          return;
+        }
+        if (password !== confirmPassword) {
+          showResponse("Passwords do not match", true);
+          return;
+        }
+
+        // Password requirements (same as signup)
+        const hasLength = password.length >= 6;
+        const hasLetter = /[a-zA-Z]/.test(password);
+        const hasDigit = /\d/.test(password);
+        const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+        if (!(hasLength && hasLetter && hasDigit && hasSpecial)) {
+          showResponse(
+            "Password does not meet security requirements. Must contain at least 6 characters with letters, numbers, and special characters.",
+            true,
+          );
+          return;
+        }
+
+        try {
+          const token = localStorage.getItem("temp_token");
+          if (!token) {
+            showResponse("Session expired. Please sign in again.", true);
+            setTimeout(() => {
+              window.location.href = "signin.html";
+            }, 1200);
+            return;
+          }
+
+          const res = await fetch(COMPLETE_PROFILE_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ fullName, password, confirmPassword }),
+          });
+          // If backend redirects, handle it
+          if (res.redirected) {
+            window.location.href = res.url;
+            return;
+          }
+          const data = await res.json();
+          if (res.ok) {
+            // Store token and user in localStorage for session
+            if (data.token && data.user) {
+              localStorage.setItem("token", data.token);
+              localStorage.setItem("user", JSON.stringify(data.user));
+              localStorage.removeItem("temp_token");
+            }
+            showResponse(
+              "✅ Profile completed successfully! Redirecting...",
+              false,
+            );
+            setTimeout(() => {
+              const dest =
+                data.user && data.user.role === "student"
+                  ? "student-profile.html"
+                  : "instructor-profile.html";
+              window.location.href = dest;
+            }, 1000);
+          } else {
+            showResponse(
+              "Error: " + (data.message || "Profile completion failed"),
+              true,
+            );
+          }
+        } catch (err) {
+          console.error("Profile completion error:", err);
+          showResponse(
+            "Server error — ensure backend is running on http://localhost:5000",
+            true,
+          );
+        }
+      }
+
       function showResponse(message, isError) {
         const container = document.getElementById("responseContainer");
         container.className = "response-container mt-4 p-4 rounded border-l-4";
@@ -496,79 +419,10 @@
         container.scrollIntoView({ behavior: "smooth" });
       }
 
-      async function handleRegister(e) {
-        e.preventDefault();
-        const fullName = document.getElementById("fullName").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value;
-        const confirmPassword =
-          document.getElementById("confirmPassword").value;
-
-        if (!fullName || !email || !password || !confirmPassword) {
-          showResponse("All fields are required!", true);
-          return;
-        }
-        if (password !== confirmPassword) {
-          showResponse("Passwords do not match!", true);
-          return;
-        }
-
-        const hasLength = password.length >= 6;
-        const hasLetter = /[a-zA-Z]/.test(password);
-        const hasDigit = /\d/.test(password);
-        const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-        if (!(hasLength && hasLetter && hasDigit && hasSpecial)) {
-          showResponse("Password must meet all requirements", true);
-          return;
-        }
-
-        try {
-          const res = await fetch(REGISTER_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              fullName,
-              email,
-              password,
-              confirmPassword,
-            }),
-          });
-          const data = await res.json();
-          if (res.ok) {
-            localStorage.setItem(
-              "user",
-              JSON.stringify(data.user || { role: "student" }),
-            );
-            showResponse(
-              "✅ Registration successful! Check your email for verification link.",
-              false,
-            );
-            document.getElementById("signupForm").reset();
-            document
-              .getElementById("passwordRequirements")
-              .classList.add("hidden");
-            setTimeout(() => {
-              window.location.href = "signin.html";
-            }, 900);
-          } else {
-            showResponse(
-              "Error: " + (data.message || "Registration failed"),
-              true,
-            );
-          }
-        } catch (err) {
-          showResponse(
-            "Server error — ensure backend is running on http://localhost:5000",
-            true,
-          );
-        }
-      }
-
-      document.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") {
-          /* keep default behaviour inside form */
-        }
-      });
+      // Add form submit handler
+      document
+        .getElementById("completeProfileForm")
+        .addEventListener("submit", handleCompleteProfile);
     </script>
   </body>
 </html>
