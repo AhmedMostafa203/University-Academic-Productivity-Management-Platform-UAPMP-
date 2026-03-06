@@ -3,38 +3,12 @@
  * Main entry point for the application
  */
 
-require("dotenv").config();
-
-// ============================================
-// ENVIRONMENT VARIABLES VALIDATION
-// ============================================
-const requiredEnvVars = [
-  "MONGO_URI",
-  "PORT",
-  "JWT_SECRET",
-  "EMAIL_HOST",
-  "EMAIL_PORT",
-  "EMAIL_USER",
-  "EMAIL_PASS",
-  "BACKEND_URL",
-  "GOOGLE_CLIENT_ID",
-];
-
-requiredEnvVars.forEach((key) => {
-  if (!process.env[key]) {
-    console.error(`[ERROR] Missing required environment variable: ${key}`);
-    process.exit(1);
-  }
-});
-
+require("dotenv").config({ path: __dirname + "/../config/.env" }); // Load environment variables from .env file in config directory
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 
 const authRoutes = require("./routes/auth");
-const adminRoutes = require("./routes/admin");
-const classRoutes = require("./routes/classes");
-const assignmentRoutes = require("./routes/assignments");
 const announcementRoutes = require("./routes/announcement");
 
 const app = express();
@@ -42,6 +16,7 @@ const app = express();
 // ============================================
 // MIDDLEWARE CONFIGURATION
 // ============================================
+// Configure CORS to allow cross-origin requests from frontend
 app.use(
   cors({
     origin: [
@@ -49,35 +24,21 @@ app.use(
       "http://localhost:5173",
       "http://127.0.0.1:5501",
       "http://localhost:5501",
+      "null",
     ],
     credentials: true,
   }),
 );
+// Parse incoming JSON request bodies
 app.use(express.json());
 
 // ============================================
 // API ROUTES
 // ============================================
+// Mount authentication routes at /api/auth endpoint
 app.use("/api/auth", authRoutes);
-app.use("/api/admin", adminRoutes);
-app.use("/api/classes", classRoutes);
-app.use("/api/assignments", assignmentRoutes);
+// Mount announcement routes at /api/announcements endpoint
 app.use("/api/announcements", announcementRoutes);
-
-// ============================================
-// 404 HANDLER
-// ============================================
-app.use((req, res) => {
-  res.status(404).json({ message: "Route not found", code: "NOT_FOUND" });
-});
-
-// ============================================
-// GLOBAL ERROR HANDLER
-// ============================================
-app.use((err, req, res, next) => {
-  console.error("[ERROR] Unhandled error:", err.stack);
-  res.status(500).json({ message: "Something went wrong", code: "INTERNAL_SERVER_ERROR" });
-});
 
 // ============================================
 // DATABASE CONNECTION & SERVER INITIALIZATION
@@ -85,13 +46,17 @@ app.use((err, req, res, next) => {
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
+    // Database connection successful
     console.log("[INFO] Database connection established successfully");
-    app.listen(process.env.PORT || 3000, () => {
+
+    // Start the Express server only after database connection is established
+    app.listen(process.env.PORT, () => {
       console.log(`[SUCCESS] Server initialized on port ${process.env.PORT}`);
       console.log("[INFO] Application is ready to accept requests");
     });
   })
   .catch((err) => {
+    // Database connection failed - exit application
     console.error("[ERROR] Database connection failed:", err.message);
     process.exit(1);
   });
