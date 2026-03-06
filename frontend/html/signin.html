@@ -241,7 +241,7 @@
             const user = JSON.parse(userJson);
             let dest;
             if (user.role === "admin" || user.role === "super_admin") {
-              dest = "admin-dashboard.html";
+              dest = "admin-profile.html";
             } else if (user.role === "student") {
               dest = "student-profile.html";
             } else {
@@ -347,7 +347,7 @@
                 const role = (data.user.role || "").toLowerCase();
                 let dest;
                 if (role === "admin" || role === "super_admin") {
-                  dest = "admin-dashboard.html";
+                  dest = "admin-profile.html";
                 } else if (role === "student") {
                   dest = "student-profile.html";
                 } else {
@@ -409,7 +409,7 @@
               const role = (data.user.role || "").toLowerCase();
               let dest;
               if (role === "admin" || role === "super_admin") {
-                dest = "admin-dashboard.html";
+                dest = "admin-profile.html";
               } else if (role === "student") {
                 dest = "student-profile.html";
               } else {

@@ -33,6 +33,12 @@
             <div class="logo-text">
               <h1>UAPMP</h1>
               <span>Student Portal</span>
+              <script>
+                document.getElementById("announcementsBell").onclick =
+                  function () {
+                    window.location.href = "notifications.html";
+                  };
+              </script>
             </div>
           </div>
 
@@ -86,6 +92,9 @@
               />
             </div>
             <div class="header-icons">
+              <a href="#" class="icon-wrapper" data-tooltip="Join Class">
+                <i class="fas fa-plus-circle join-icon"></i>
+              </a>
               <i
                 class="far fa-bell"
                 id="announcementsBell"
@@ -103,7 +112,7 @@
 
         <script>
           document.getElementById("announcementsBell").onclick = function () {
-            window.location.href = "student-announcements.html";
+            window.location.href = "notifications.html";
           };
         </script>
 

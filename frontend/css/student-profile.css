@@ -787,3 +787,50 @@ body.dark-mode #themeToggle.fa-sun:hover {
     color: #ef4444;
     transform: scale(1.1);
 }
+
+.icon-wrapper {
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    display: flex;
+    align-items: center;
+    transition: 0.3s ease;
+}
+
+.join-icon {
+    font-size: 20px;
+    color: #64748b;
+    transition: 0.3s ease;
+}
+
+.icon-wrapper:hover .join-icon {
+    color: #2563eb;
+    transform: scale(1.2);
+}
+
+
+.icon-wrapper::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: -35px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: #1e293b;
+    color: #fff;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.icon-wrapper:hover::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Courses - UAPMP</title>
+    <link rel="stylesheet" href="../css/student-profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/courses.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-top">
+                <div class="logo">
+                    <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+                    <div class="logo-text">
+                        <h1>UAPMP</h1>
+                        <span>Student Portal</span>
+                    </div>
+                </div>
+                <nav class="menu">
+                    <a href="profil.html" class="menu-item"><i class="fas fa-th-large"></i> Dashboard</a>
+                    <a href="#" class="menu-item active"><i class="fas fa-book"></i> My Courses</a>
+                    <a href="#" class="menu-item"><i class="fas fa-tasks"></i> Tasks</a>
+                    <a href="#" class="menu-item"><i class="fas fa-star"></i> Grades</a>
+                    <a href="#" class="menu-item"><i class="fas fa-calendar-alt"></i> Schedule</a>
+                    <a href="#" class="menu-item"><i class="fas fa-cog"></i> Settings</a>
+                </nav>
+            </div>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <img src="https://ui-avatars.com/api/?name=Alex+Chen&background=random" alt="User">
+                    <div>
+                        <p class="user-name">Alex Chen</p>
+                        <p class="user-id">ID: 20240912</p>
+                    </div>
+                </div>
+                <i class="fas fa-sign-out-alt logout-btn"></i>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <h2>My Courses</h2>
+                <div class="header-right">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search for courses, assignments...">
+                    </div>
+                    <div class="header-icons">
+                      <a href="#" class="icon-wrapper" data-tooltip="Join Class">
+                        <i class="fas fa-plus-circle join-icon"></i>
+                         </a>
+                        <a href="notifications.html" class="notification-link">
+                         <i class="fa-solid fa-bell"></i>
+                        </a>
+                        <i class="far fa-moon" id="themeToggle"></i>
+                        <img src="https://ui-avatars.com/api/?name=Alex+Chen&background=E5B79B" class="top-avatar">
+                    </div>
+                </div>
+            </header>
+
+            <div class="courses-grid">
+                <div class="course-card">
+                    <div class="card-header blue-bg"><span>CS101</span></div>
+                    <div class="card-body">
+                        <h5>Intro to Algorithms</h5>
+                        <p class="prof">Prof. Alan Turing</p>
+                        <p class="time"><i class="far fa-clock"></i> Mon/Wed • 10:00 AM</p>
+                        <button class="btn-details">View Details</button>
+                    </div>
+                </div>
+                <div class="course-card">
+                    <div class="card-header green-bg"><span>MATH202</span></div>
+                    <div class="card-body">
+                        <h5>Linear Algebra</h5>
+                        <p class="prof">Prof. Katherine Johnson</p>
+                        <p class="time"><i class="far fa-clock"></i> Tue/Thu • 2:00 PM</p>
+                        <button class="btn-details">View Details</button>
+                    </div>
+                </div>
+                <div class="course-card">
+                    <div class="card-header orange-bg"><span>CHEM301</span></div>
+                    <div class="card-body">
+                        <h5>Organic Chemistry</h5>
+                        <p class="prof">Prof. Marie Curie</p>
+                        <p class="time"><i class="far fa-clock"></i> Mon/Wed/Fri • 9:00 AM</p>
+                        <button class="btn-details">View Details</button>
+                    </div>
+                </div>
+                <div class="course-card">
+                    <div class="card-header sky-bg"><span>PHYS201</span></div>
+                    <div class="card-body">
+                        <h5>Quantum Physics</h5>
+                        <p class="prof">Prof. Richard Feynman</p>
+                        <p class="time"><i class="far fa-clock"></i> Tue/Thu • 11:30 AM</p>
+                        <button class="btn-details">View Details</button>
+                    </div>
+                </div>
+                <div class="course-card">
+                    <div class="card-header pink-bg"><span>BIO101</span></div>
+                    <div class="card-body">
+                        <h5>General Biology</h5>
+                        <p class="prof">Prof. Rosalind Franklin</p>
+                        <p class="time"><i class="far fa-clock"></i> Wed/Fri • 1:00 PM</p>
+                        <button class="btn-details">View Details</button>
+                    </div>
+                </div>
+                <div class="course-card">
+                    <div class="card-header teal-bg"><span>STAT401</span></div>
+                    <div class="card-body">
+                        <h5>Advanced Statistics</h5>
+                        <p class="prof">Prof. Karl Pearson</p>
+                        <p class="time"><i class="far fa-clock"></i> Mon/Thu • 4:00 PM</p>
+                        <button class="btn-details">View Details</button>
+                    </div>
+                </div>
+                <div class="course-card">
+                    <div class="card-header gold-bg"><span>HIST102</span></div>
+                    <div class="card-body">
+                        <h5>Modern World History</h5>
+                        <p class="prof">Prof. Howard Zinn</p>
+                        <p class="time"><i class="far fa-clock"></i> Tue/Fri • 10:00 AM</p>
+                        <button class="btn-details">View Details</button>
+                    </div>
+                </div>
+                <div class="course-card">
+                    <div class="card-header magenta-bg"><span>ENG202</span></div>
+                    <div class="card-body">
+                        <h5>Creative Writing</h5>
+                        <p class="prof">Prof. Maya Angelou</p>
+                        <p class="time"><i class="far fa-clock"></i> Wednesday • 3:00 PM</p>
+                        <button class="btn-details">View Details</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // كود تشغيل الدارك مود واللايت مود كما في ملفك الأصلي
+        const toggleBtn = document.getElementById("themeToggle");
+        if (localStorage.getItem("theme") === "dark") {
+            document.body.classList.add("dark-mode");
+            toggleBtn.classList.replace("fa-moon", "fa-sun");
+        }
+        toggleBtn.addEventListener("click", () => {
+            document.body.classList.toggle("dark-mode");
+            const isDark = document.body.classList.contains("dark-mode");
+            localStorage.setItem("theme", isDark ? "dark" : "light");
+            isDark ? toggleBtn.classList.replace("fa-moon", "fa-sun") : toggleBtn.classList.replace("fa-sun", "fa-moon");
+        });
+    </script>
+</body>
+</html>

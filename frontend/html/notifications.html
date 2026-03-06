@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notifications - UAPMP</title>
+    <link rel="stylesheet" href="../css/student-profile.css" />
+    <link rel="stylesheet" href="../css/notifications.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <aside class="sidebar">
+        <div class="sidebar-top">
+          <div class="logo">
+            <div class="logo-icon">
+              <svg
+                class="w-full h-full"
+                fill="none"
+                viewBox="0 0 48 48"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  clip-rule="evenodd"
+                  d="M39.475 21.6262C40.358 21.4363 40.6863 21.5589 40.7581 21.5934C40.7876 21.655 40.8547 21.857 40.8082 22.3336C40.7408 23.0255 40.4502 24.0046 39.8572 25.2301C38.6799 27.6631 36.5085 30.6631 33.5858 33.5858C30.6631 36.5085 27.6632 38.6799 25.2301 39.8572C24.0046 40.4502 23.0255 40.7407 22.3336 40.8082C21.8571 40.8547 21.6551 40.7875 21.5934 40.7581C21.5589 40.6863 21.4363 40.358 21.6262 39.475C21.8562 38.4054 22.4689 36.9657 23.5038 35.2817C24.7575 33.2417 26.5497 30.9744 28.7621 28.762C30.9744 26.5497 33.2417 24.7574 35.2817 23.5037C36.9657 22.4689 38.4054 21.8562 39.475 21.6262ZM4.41189 29.2403L18.7597 43.5881C19.8813 44.7097 21.4027 44.9179 22.7217 44.7893C24.0585 44.659 25.5148 44.1631 26.9723 43.4579C29.9052 42.0387 33.2618 39.5667 36.4142 36.4142C39.5667 33.2618 42.0387 29.9052 43.4579 26.9723C44.1631 25.5148 44.659 24.0585 44.7893 22.7217C44.9179 21.4027 44.7097 19.8813 43.5881 18.7597L29.2403 4.41187C27.8527 3.02428 25.8765 3.02573 24.2861 3.36776C22.6081 3.72863 20.7334 4.58419 18.8396 5.74801C16.4978 7.18716 13.9881 9.18353 11.5858 11.5858C9.18354 13.988 7.18717 16.4978 5.74802 18.8396C4.58421 20.7334 3.72865 22.6081 3.36778 24.2861C3.02574 25.8765 3.02429 27.8527 4.41189 29.2403Z"
+                  fill="currentColor"
+                  fill-rule="evenodd"
+                ></path>
+              </svg>
+            </div>
+            <div class="logo-text">
+              <h1>UAPMP</h1>
+              <span>Student Portal</span>
+              <script>
+                document.getElementById("announcementsBell").onclick =
+                  function () {
+                    window.location.href = "notifications.html";
+                  };
+              </script>
+            </div>
+          </div>
+          <nav class="menu">
+            <a href="student-profile.html" class="menu-item"
+              ><i class="fas fa-th-large"></i> Dashboard</a
+            >
+            <a href="courses.html" class="menu-item"
+              ><i class="fas fa-book"></i> My Courses</a
+            >
+            <a href="#" class="menu-item"><i class="fas fa-tasks"></i> Tasks</a>
+            <a href="#" class="menu-item"><i class="fas fa-star"></i> Grades</a>
+            <a href="#" class="menu-item"
+              ><i class="fas fa-calendar-alt"></i> Schedule</a
+            >
+            <a href="#" class="menu-item"
+              ><i class="fas fa-cog"></i> Settings</a
+            >
+          </nav>
+        </div>
+        <div class="sidebar-footer">
+          <div class="user-info">
+            <img
+              id="notifAvatar"
+              src="https://ui-avatars.com/api/?name=Placeholder&background=random"
+              alt="User"
+            />
+            <div>
+              <p class="user-name" id="notifName">Loading...</p>
+              <p class="user-id" id="notifId">ID: --</p>
+            </div>
+          </div>
+          <i class="fas fa-sign-out-alt logout-btn"></i>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="header">
+          <h2>Notifications</h2>
+          <div class="header-right">
+            <div class="search-bar">
+              <i class="fas fa-search"></i>
+              <input type="text" placeholder="Search notifications..." />
+            </div>
+            <div class="header-icons">
+              <a href="#" class="notification-link">
+                <i class="fa-solid fa-bell"></i>
+              </a>
+              <i class="far fa-moon" id="themeToggle"></i>
+              <img
+                id="notifTopAvatar"
+                src="https://ui-avatars.com/api/?name=Placeholder&background=E5B79B"
+                class="top-avatar"
+              />
+            </div>
+            <script src="../config.js"></script>
+            <script>
+              // Populate user info from localStorage
+              (function populateUser() {
+                const userJson = localStorage.getItem("user");
+                if (!userJson) return;
+                try {
+                  const user = JSON.parse(userJson);
+                  const name = user.fullName || "";
+                  const id = user.studentId || user.id || "--";
+                  // update sidebar
+                  document.getElementById("notifName").textContent = name;
+                  document.getElementById("notifId").textContent = `ID: ${id}`;
+                  // avatars
+                  const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`;
+                  document.getElementById("notifAvatar").src = avatarUrl;
+                  document.getElementById("notifTopAvatar").src =
+                    avatarUrl.replace("background=random", "background=E5B79B");
+                } catch (e) {
+                  console.error(
+                    "Failed to parse user data for notifications:",
+                    e,
+                  );
+                }
+              })();
+            </script>
+          </div>
+        </header>
+
+        <section class="notif-center">
+          <div class="notif-header">
+            <h3>Notifications Center</h3>
+            <p>
+              Stay updated with announcements from your professors and
+              administration
+            </p>
+            <div class="notif-filters">
+              <button class="filter-btn active">All (12)</button>
+              <button class="filter-btn">From Doctors</button>
+              <button class="filter-btn">From Admin</button>
+              <div class="notif-actions">
+                <a href="#">Mark all as read</a>
+                <a href="#">Clear all</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="notif-list" id="notifList">
+            <!-- Announcements will be rendered here -->
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="../config.js"></script>
+    <script>
+      // Dark Mode Toggle
+      const toggleBtn = document.getElementById("themeToggle");
+      if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark-mode");
+        toggleBtn.classList.replace("fa-moon", "fa-sun");
+      }
+      toggleBtn.addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+        const isDark = document.body.classList.contains("dark-mode");
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+        isDark
+          ? toggleBtn.classList.replace("fa-moon", "fa-sun")
+          : toggleBtn.classList.replace("fa-sun", "fa-moon");
+      });
+
+      // Fetch and render announcements from DB
+      const API_URL =
+        window.API_CONFIG && window.API_CONFIG.BASE_URL
+          ? window.API_CONFIG.BASE_URL
+          : "http://localhost:5000";
+      const ANNOUNCEMENTS_URL = API_URL + "/api/announcements";
+      const token = localStorage.getItem("token");
+
+      async function fetchAnnouncements() {
+        const res = await fetch(ANNOUNCEMENTS_URL, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        renderAnnouncements(data.announcements || []);
+      }
+
+      function renderAnnouncements(list) {
+        const container = document.getElementById("notifList");
+        if (!list.length) {
+          container.innerHTML =
+            '<div class="text-gray-500">No announcements yet.</div>';
+          return;
+        }
+        container.innerHTML = list
+          .map(
+            (a) => `
+                    <div class="notif-card ${a.visibleTo.includes("admin") ? "admin" : a.visibleTo.includes("instructor") ? "doctor" : ""}">
+                        <div class="notif-icon"><i class="fas fa-bullhorn"></i></div>
+                        <div class="notif-body">
+                            <div class="notif-meta">
+                                <span class="notif-type">${a.visibleTo.join(", ")}</span>
+                                <span class="notif-time">${new Date(a.createdAt).toLocaleString()}</span>
+                            </div>
+                            <h4>${a.title}</h4>
+                            <p>${a.message}</p>
+                              ${a.link ? `<div class="notif-link"><a href="${a.link}" target="_blank" class="attachment-link"><i class="fa-solid fa-link"></i> ${a.visibleTo.includes("admin") ? "View Admin Attachment" : a.visibleTo.includes("instructor") ? "View Doctor Attachment" : "View Resource"}</a></div>` : ""}
+                        </div>
+                    </div>
+                `,
+          )
+          .join("");
+      }
+
+      fetchAnnouncements();
+      // logout button functionality (copied from student-profile.html)
+      document
+        .querySelector(".logout-btn")
+        .addEventListener("click", function () {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          window.location.href = "signin.html";
+        });
+    </script>
+  </body>
+</html>

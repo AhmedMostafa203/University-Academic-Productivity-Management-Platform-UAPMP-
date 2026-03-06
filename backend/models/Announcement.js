@@ -27,8 +27,8 @@ const announcementSchema = new mongoose.Schema(
       required: true,
     },
     visibleTo: {
-      type: [String], // e.g. ["student", "instructor"]
-      enum: ["student", "instructor", "admin", "super_admin"],
+      type: [String], // e.g. ["student", "instructor", "staff"]
+      enum: ["student", "instructor", "staff", "admin", "super_admin"],
       default: ["student"],
     },
     
