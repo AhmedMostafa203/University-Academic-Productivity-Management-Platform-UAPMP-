@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UAPMP Admin Dashboard</title>
+    <link rel="stylesheet" href="../css/instructor-profile.css" />
+    <link rel="stylesheet" href="../css/student-profile.css" />
+    <style>
+      .admin-announcement-form {
+        background: #fff;
+        border-radius: 8px;
+        padding: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        margin-bottom: 2rem;
+      }
+      .admin-announcement-list {
+        background: #fff;
+        border-radius: 8px;
+        padding: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+      .announcement-item {
+        border-bottom: 1px solid #eee;
+        padding: 1rem 0;
+      }
+      .announcement-item:last-child {
+        border-bottom: none;
+      }
+      .announcement-title {
+        font-weight: bold;
+        font-size: 1.1rem;
+      }
+      .announcement-message {
+        margin: 0.5rem 0 0.2rem 0;
+      }
+      .announcement-meta {
+        font-size: 0.9rem;
+        color: #888;
+      }
+      .delete-btn {
+        color: #e53e3e;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 0.95rem;
+        margin-left: 1rem;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen font-sans bg-gray-100">
+    <header class="fixed top-0 left-0 w-full bg-white z-40 shadow-sm">
+      <div
+        class="max-w-5xl mx-auto px-4 sm:px-8 h-14 flex items-center justify-between"
+      >
+        <div class="flex items-center gap-3 font-semibold text-lg">
+          <span style="color: #3b82f6">UAPMP</span>
+          <span class="text-gray-800">Admin Dashboard</span>
+        </div>
+        <button id="logoutBtn" class="text-red-600 font-semibold">
+          Logout
+        </button>
+      </div>
+    </header>
+    <main class="max-w-3xl mx-auto pt-24 pb-8">
+      <section class="admin-announcement-form">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-bold">Create Announcement</h2>
+          <a
+            href="all-announcements.html"
+            class="bg-gray-200 text-blue-700 px-4 py-2 rounded-lg font-semibold hover:bg-blue-300"
+            >View All Announcements</a
+          >
+        </div>
+        <form id="announcementForm">
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Title</label
+            >
+            <input
+              type="text"
+              id="title"
+              required
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg"
+            />
+          </div>
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Message</label
+            >
+            <textarea
+              id="message"
+              required
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg"
+            ></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Visible To</label
+            >
+            <select
+              id="visibleTo"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg"
+            >
+              <option value="student">Students</option>
+              <option value="instructor">Instructors</option>
+              <option value="student,instructor">Students & Instructors</option>
+            </select>
+          </div>
+          <button
+            type="submit"
+            class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700"
+          >
+            Post Announcement
+          </button>
+        </form>
+        <div id="formResponse" class="mt-3 text-sm"></div>
+      </section>
+      <section class="admin-announcement-list">
+        <h2 class="text-xl font-bold mb-4">All Announcements</h2>
+        <div id="announcementsList"></div>
+      </section>
+    </main>
+    <script src="../config.js"></script>
+    <script>
+      // Auth check: Only allow admin/super_admin
+      (function guard() {
+        const token = localStorage.getItem("token");
+        const userJson = localStorage.getItem("user");
+        if (!token || !userJson) {
+          window.location.href = "signin.html";
+          return;
+        }
+        try {
+          const user = JSON.parse(userJson);
+          if (user.role !== "admin" && user.role !== "super_admin") {
+            window.location.href = "signin.html";
+            return;
+          }
+        } catch {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          window.location.href = "signin.html";
+        }
+      })();
+
+      // Logout
+      document.getElementById("logoutBtn").onclick = function () {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.href = "signin.html";
+      };
+
+      // Announcement CRUD
+      const API_URL =
+        window.API_CONFIG && window.API_CONFIG.BASE_URL
+          ? window.API_CONFIG.BASE_URL
+          : "http://localhost:5000";
+      const ANNOUNCEMENTS_URL = API_URL + "/api/announcements";
+      const token = localStorage.getItem("token");
+
+      async function fetchAnnouncements() {
+        const res = await fetch(ANNOUNCEMENTS_URL, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        renderAnnouncements(data.announcements || []);
+      }
+
+      function renderAnnouncements(list) {
+        const container = document.getElementById("announcementsList");
+        if (!list.length) {
+          container.innerHTML =
+            '<div class="text-gray-500">No announcements yet.</div>';
+          return;
+        }
+        container.innerHTML = list
+          .map(
+            (a) => `
+          <div class="announcement-item">
+            <div class="announcement-title">${a.title}</div>
+            <div class="announcement-message">${a.message}</div>
+            <div class="announcement-meta">
+              Visible to: ${a.visibleTo.join(", ")} | Posted: ${new Date(a.createdAt).toLocaleString()}
+              <button class="delete-btn" onclick="deleteAnnouncement('${a._id}')">Delete</button>
+              <button class="edit-btn" style="color:#2563eb;margin-left:1rem;background:none;border:none;cursor:pointer;font-size:0.95rem;" onclick="openEditModal('${a._id}', '${encodeURIComponent(a.title)}', '${encodeURIComponent(a.message)}', '${a.visibleTo.join(",")}')">Edit</button>
+            </div>
+          </div>
+        `,
+          )
+          .join("");
+        // Edit Modal
+        function openEditModal(id, title, message, visibleTo) {
+          let modal = document.getElementById("editModal");
+          if (!modal) {
+            modal = document.createElement("div");
+            modal.id = "editModal";
+            modal.style.position = "fixed";
+            modal.style.top = "0";
+            modal.style.left = "0";
+            modal.style.width = "100vw";
+            modal.style.height = "100vh";
+            modal.style.background = "rgba(0,0,0,0.3)";
+            modal.style.display = "flex";
+            modal.style.alignItems = "center";
+            modal.style.justifyContent = "center";
+            modal.innerHTML = `
+                  <div style="background:#fff;padding:2rem;border-radius:8px;min-width:320px;max-width:90vw;">
+                    <h3 style="font-size:1.2rem;font-weight:bold;margin-bottom:1rem;">Edit Announcement</h3>
+                    <form id="editAnnouncementForm">
+                      <div style="margin-bottom:0.7rem;">
+                        <label>Title</label><br/>
+                        <input type="text" id="editTitle" style="width:100%;padding:0.5rem;" required />
+                      </div>
+                      <div style="margin-bottom:0.7rem;">
+                        <label>Message</label><br/>
+                        <textarea id="editMessage" style="width:100%;padding:0.5rem;" required></textarea>
+                      </div>
+                      <div style="margin-bottom:0.7rem;">
+                        <label>Visible To</label><br/>
+                        <select id="editVisibleTo" style="width:100%;padding:0.5rem;">
+                          <option value="student">Students</option>
+                          <option value="instructor">Instructors</option>
+                          <option value="student,instructor">Students & Instructors</option>
+                        </select>
+                      </div>
+                      <div style="display:flex;gap:1rem;justify-content:flex-end;">
+                        <button type="button" id="cancelEditBtn" style="background:#eee;padding:0.5rem 1.2rem;border-radius:5px;">Cancel</button>
+                        <button type="submit" style="background:#2563eb;color:#fff;padding:0.5rem 1.2rem;border-radius:5px;">Save</button>
+                      </div>
+                      <div id="editFormResponse" style="margin-top:0.7rem;font-size:0.95rem;"></div>
+                    </form>
+                  </div>
+                `;
+            document.body.appendChild(modal);
+          }
+          document.getElementById("editTitle").value =
+            decodeURIComponent(title);
+          document.getElementById("editMessage").value =
+            decodeURIComponent(message);
+          document.getElementById("editVisibleTo").value = visibleTo;
+          modal.style.display = "flex";
+          document.getElementById("cancelEditBtn").onclick = function () {
+            modal.style.display = "none";
+          };
+          document.getElementById("editAnnouncementForm").onsubmit =
+            async function (e) {
+              e.preventDefault();
+              const newTitle = document
+                .getElementById("editTitle")
+                .value.trim();
+              const newMessage = document
+                .getElementById("editMessage")
+                .value.trim();
+              const newVisibleTo = document
+                .getElementById("editVisibleTo")
+                .value.split(",");
+              const res = await fetch(ANNOUNCEMENTS_URL + "/" + id, {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                  title: newTitle,
+                  message: newMessage,
+                  visibleTo: newVisibleTo,
+                }),
+              });
+              const data = await res.json();
+              const responseDiv = document.getElementById("editFormResponse");
+              if (res.ok) {
+                responseDiv.textContent = "Announcement updated!";
+                responseDiv.style.color = "#16a34a";
+                await fetchAnnouncements();
+                setTimeout(() => {
+                  modal.style.display = "none";
+                }, 1200);
+              } else {
+                responseDiv.textContent = data.message || "Failed to update.";
+                responseDiv.style.color = "#dc2626";
+              }
+            };
+        }
+        window.openEditModal = openEditModal;
+      }
+
+      async function deleteAnnouncement(id) {
+        if (!confirm("Delete this announcement?")) return;
+        const res = await fetch(ANNOUNCEMENTS_URL + "/" + id, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        await fetchAnnouncements();
+      }
+      window.deleteAnnouncement = deleteAnnouncement;
+
+      document.getElementById("announcementForm").onsubmit = async function (
+        e,
+      ) {
+        e.preventDefault();
+        const title = document.getElementById("title").value.trim();
+        const message = document.getElementById("message").value.trim();
+        const visibleTo = document.getElementById("visibleTo").value.split(",");
+        const res = await fetch(ANNOUNCEMENTS_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ title, message, visibleTo }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          const responseDiv = document.getElementById("formResponse");
+          responseDiv.textContent = "Announcement posted successfully!";
+          responseDiv.style.color = "#16a34a";
+          document.getElementById("announcementForm").reset();
+          await fetchAnnouncements();
+          setTimeout(() => {
+            responseDiv.textContent = "";
+          }, 2500);
+        } else {
+          const responseDiv = document.getElementById("formResponse");
+          responseDiv.textContent = data.message || "Failed to post.";
+          responseDiv.style.color = "#dc2626";
+        }
+      };
+
+      fetchAnnouncements();
+    </script>
+  </body>
+</html>
