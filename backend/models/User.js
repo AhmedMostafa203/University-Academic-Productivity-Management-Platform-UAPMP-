@@ -41,12 +41,12 @@ const userSchema = new mongoose.Schema(
     // University domain (e.g., 'cu.edu.eg' for Cairo University)
     university: {
       type: String,
-      required: true,
+     default: null
     },
     // College/Faculty name (e.g., 'Faculty of Engineering')
     college: {
       type: String,
-      required: true,
+     default: null
     },
     // Email verification status (default: false until verified)
     isEmailVerified: {

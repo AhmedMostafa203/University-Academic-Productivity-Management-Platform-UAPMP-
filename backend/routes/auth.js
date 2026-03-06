@@ -18,12 +18,6 @@ const router = express.Router();
 // HELPER FUNCTIONS
 // ============================================
 
-/**
- * Validates password against security requirements
- * Requirements: minimum 6 characters, contains letter, digit, and special character
- * @param {string} password - The password to validate
- * @returns {object} - Contains isStrong flag and individual requirement statuses
- */
 const validatePasswordStrength = (password) => {
   const requirements = {
     length: password.length >= 6,
@@ -37,15 +31,6 @@ const validatePasswordStrength = (password) => {
   return { isStrong, requirements };
 };
 
-/**
- * Extracts user data from university email address
- * Supports Cairo University email formats (student and staff)
- * Student emails: [7-digits]@std.[subdomain].cu.edu.eg
- * Staff emails: [name]@[subdomain].cu.edu.eg
- * @param {string} email - The university email address
- * @returns {object} - Contains university name, faculty name, role, and studentId (if student)
- * @throws {Error} - If email format is invalid or faculty not recognized
- */
 const extractUserDataFromEmail = (email) => {
   const regex = /^([a-zA-Z0-9._%+-]+)@(?:(std)\.)?([^.]+)\.(cu\.edu\.eg)$/i;
   const match = email.match(regex);
@@ -54,8 +39,8 @@ const extractUserDataFromEmail = (email) => {
     throw new Error("Invalid Cairo University email format");
   }
 
-  const emailPrefix = match[1]; // Part before @
-  const isStudent = !!match[2]; // Check if 'std' subdomain is present
+  const emailPrefix = match[1];
+  const isStudent = !!match[2];
   const subdomain = match[3].toLowerCase();
   const domain = match[4].toLowerCase();
 
@@ -73,13 +58,9 @@ const extractUserDataFromEmail = (email) => {
     );
   }
 
-  // Extract student ID if user is a student.
-  // New format: 9-digit prefix where the actual student ID is 7 digits
-  // starting from the 3rd character. Support legacy 7-digit prefixes too.
   let studentId = null;
   if (isStudent) {
     if (/^\d{9}$/.test(emailPrefix)) {
-      // take 7 digits starting from the 3rd character (index 2)
       studentId = emailPrefix.substr(2, 7);
     } else if (/^\d{7}$/.test(emailPrefix)) {
       studentId = emailPrefix;
@@ -98,16 +79,11 @@ const extractUserDataFromEmail = (email) => {
   };
 };
 
-/**
- * Configures and returns a Nodemailer transporter
- * Uses environment variables for email configuration
- * @returns {object} - Nodemailer transporter instance
- */
 const getEmailTransporter = () => {
   return nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
-    secure: process.env.EMAIL_SECURE === "true", // TLS
+    secure: process.env.EMAIL_SECURE === "true",
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
@@ -115,13 +91,6 @@ const getEmailTransporter = () => {
   });
 };
 
-/**
- * Sends email verification link to user
- * @param {string} email - User's email address
- * @param {string} userId - User's database id
- * @param {string} userName - User's full name
- * @returns {Promise} - Email sending result
- */
 const sendVerificationEmail = async (email, userId, userName) => {
   const verificationUrl = `${process.env.BACKEND_URL || "http://localhost:5000"}/api/auth/verify-email/${userId}`;
 
@@ -155,18 +124,10 @@ const sendVerificationEmail = async (email, userId, userName) => {
 // AUTHENTICATION ENDPOINTS
 // ============================================
 
-/**
- * POST /register
- * Creates a new user account with automatic role detection from email format
- * Student emails: [7-digits]@std.sci.cu.edu.eg
- * Instructor emails: [name]@sci.cu.edu.eg
- */
 router.post("/register", async (req, res) => {
   try {
-    // Extract credentials from request body
     const { fullName, email, password, confirmPassword } = req.body;
 
-    // Validate all required fields are provided
     if (!fullName || !email || !password || !confirmPassword) {
       return res.status(400).json({
         message: "Invalid request: all fields are required",
@@ -174,7 +135,6 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    // Verify password confirmation matches original password
     if (password !== confirmPassword) {
       return res.status(400).json({
         message: "Password confirmation does not match",
@@ -182,45 +142,28 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    // Check password meets security requirements
     const { isStrong, requirements } = validatePasswordStrength(password);
     if (!isStrong) {
       return res.status(400).json({
         message: "Password does not meet security requirements",
         code: "WEAK_PASSWORD",
         requirements: {
-          minLength: {
-            status: requirements.length,
-            message: "Minimum 6 characters",
-          },
-          hasLetters: {
-            status: requirements.hasLetter,
-            message: "Must contain letters (a-z, A-Z)",
-          },
-          hasNumbers: {
-            status: requirements.hasDigit,
-            message: "Must contain numbers (0-9)",
-          },
-          hasSpecialChar: {
-            status: requirements.hasSpecial,
-            message: "Must contain special character (!@#$%^&*)",
-          },
+          minLength: { status: requirements.length, message: "Minimum 6 characters" },
+          hasLetters: { status: requirements.hasLetter, message: "Must contain letters (a-z, A-Z)" },
+          hasNumbers: { status: requirements.hasDigit, message: "Must contain numbers (0-9)" },
+          hasSpecialChar: { status: requirements.hasSpecial, message: "Must contain special character (!@#$%^&*)" },
         },
       });
     }
 
-    // Normalize email to lowercase for consistency
     const emailLower = email.toLowerCase();
 
-    // Initialize user properties
     let studentId = null;
     let role = null;
     let displayName = fullName;
     let university = null;
     let college = null;
 
-
-    // Extract faculty, university, role, and student ID from email
     try {
       const emailData = extractUserDataFromEmail(emailLower);
       role = emailData.role;
@@ -228,7 +171,6 @@ router.post("/register", async (req, res) => {
       college = emailData.faculty;
       studentId = emailData.studentId;
 
-      // Prevent registration of admin and super_admin
       if (role === "admin" || role === "super_admin") {
         return res.status(403).json({
           message: "Registration for admin and super_admin is not allowed.",
@@ -236,15 +178,10 @@ router.post("/register", async (req, res) => {
         });
       }
 
-      // Add "Dr." prefix to instructor name if not already present
-      if (
-        role === "instructor" &&
-        !displayName.toLowerCase().startsWith("dr.")
-      ) {
+      if (role === "instructor" && !displayName.toLowerCase().startsWith("dr.")) {
         displayName = `Dr. ${fullName}`;
       }
     } catch (emailError) {
-      // Email validation failed
       return res.status(400).json({
         message: "Invalid email format",
         code: "INVALID_EMAIL_FORMAT",
@@ -252,12 +189,9 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    // Hash password with bcrypt salt for secure storage
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create new user record with unverified status (no token stored)
-    // Only include studentId if role is student
     const userPayload = {
       fullName: displayName,
       email: emailLower,
@@ -268,28 +202,20 @@ router.post("/register", async (req, res) => {
       isEmailVerified: false,
     };
 
-    // Only add studentId for students
     if (role === "student" && studentId) {
       userPayload.studentId = studentId;
     }
 
     const newUser = await User.create(userPayload);
 
-    // Send verification email (link contains user id; verification checks createdAt)
     try {
       await sendVerificationEmail(emailLower, newUser._id, displayName);
     } catch (emailError) {
-      // Log email error but don't fail registration
-      console.error(
-        "[WARNING] Failed to send verification email:",
-        emailError.message,
-      );
+      console.error("[WARNING] Failed to send verification email:", emailError.message);
     }
 
-    // Return response indicating email verification is required
     res.status(201).json({
-      message:
-        "Account created successfully. Please verify your email to activate your account.",
+      message: "Account created successfully. Please verify your email to activate your account.",
       code: "REGISTRATION_SUCCESS_VERIFY_EMAIL",
       user: {
         id: newUser._id,
@@ -301,16 +227,11 @@ router.post("/register", async (req, res) => {
         college: newUser.college,
         isEmailVerified: newUser.isEmailVerified,
       },
-      details:
-        "A verification link has been sent to your email. Please check your inbox (and spam folder).",
+      details: "A verification link has been sent to your email. Please check your inbox (and spam folder).",
     });
   } catch (error) {
-    // ============================================
-    // ERROR HANDLING
-    // ============================================
     console.error("[ERROR] Registration process failed:", error.message);
 
-    // Handle MongoDB duplicate key constraint violation
     if (error.code === 11000) {
       const field = Object.keys(error.keyPattern)[0];
       return res.status(409).json({
@@ -320,7 +241,6 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    // Handle schema validation errors from database
     if (error.name === "ValidationError") {
       const messages = Object.values(error.errors).map((e) => e.message);
       return res.status(400).json({
@@ -330,7 +250,6 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    // Handle all other unexpected errors
     res.status(500).json({
       message: "An unexpected error occurred during registration",
       code: "INTERNAL_SERVER_ERROR",
@@ -338,67 +257,44 @@ router.post("/register", async (req, res) => {
   }
 });
 
-/**
- * POST /verify-email
- * Verifies user's email address using the verification token
- * Allows user to login after successful email verification
- */
 router.post("/verify-email", async (req, res) => {
   try {
     const { uid } = req.body;
 
     if (!uid) {
-      return res.status(400).json({
-        message: "Verification uid is required",
-        code: "MISSING_UID",
-      });
+      return res.status(400).json({ message: "Verification uid is required", code: "MISSING_UID" });
     }
 
-    // Find user by id
     const user = await User.findById(uid);
 
     if (!user) {
-      return res.status(400).json({
-        message: "Invalid verification link or user not found",
-        code: "INVALID_UID",
-      });
+      return res.status(400).json({ message: "Invalid verification link or user not found", code: "INVALID_UID" });
     }
 
-    // Check if email is already verified
     if (user.isEmailVerified) {
-      return res.status(400).json({
-        message: "Email is already verified",
-        code: "ALREADY_VERIFIED",
-      });
+      return res.status(400).json({ message: "Email is already verified", code: "ALREADY_VERIFIED" });
     }
 
-    // Ensure the verification link is used within 24 hours of registration
     const createdAt = user.createdAt || user._id.getTimestamp();
     const ageMs = Date.now() - new Date(createdAt).getTime();
-    const maxAgeMs = 24 * 60 * 60 * 1000; // 24 hours
+    const maxAgeMs = 24 * 60 * 60 * 1000;
+
     if (ageMs > maxAgeMs) {
-      // Remove the unverified user record to avoid stale accounts
       try {
         await User.deleteOne({ _id: user._id });
       } catch (delError) {
-        console.error(
-          "[WARNING] Failed to delete expired unverified user:",
-          delError.message,
-        );
+        console.error("[WARNING] Failed to delete expired unverified user:", delError.message);
       }
 
       return res.status(400).json({
-        message:
-          "Verification link has expired and the unverified account has been removed. Please register again.",
+        message: "Verification link has expired and the unverified account has been removed. Please register again.",
         code: "TOKEN_EXPIRED_ACCOUNT_REMOVED",
       });
     }
 
-    // Mark email as verified
     user.isEmailVerified = true;
     await user.save();
 
-    // Return success response (email verified)
     res.status(200).json({
       message: "Email verified successfully. You can now login.",
       code: "EMAIL_VERIFIED_SUCCESS",
@@ -414,7 +310,6 @@ router.post("/verify-email", async (req, res) => {
     });
   } catch (error) {
     console.error("[ERROR] Email verification failed:", error.message);
-
     res.status(500).json({
       message: "An unexpected error occurred during email verification",
       code: "INTERNAL_SERVER_ERROR",
@@ -422,98 +317,28 @@ router.post("/verify-email", async (req, res) => {
   }
 });
 
-/**
- * GET /verify-email/:uid
- * Direct verification link - verifies email and redirects to dashboard
- * Used in email verification links for automatic redirect
- */
 router.get("/verify-email/:uid", async (req, res) => {
   try {
     const { uid } = req.params;
 
     if (!uid) {
-      return res
-        .status(400)
-        .send(
-          "<html><body><h1>❌ Invalid Verification Link</h1><p>User ID is missing.</p></body></html>",
-        );
+      return res.status(400).send("<html><body><h1>❌ Invalid Verification Link</h1><p>User ID is missing.</p></body></html>");
     }
 
-    // Find user by id
     const user = await User.findById(uid);
 
     if (!user) {
-      return res
-        .status(400)
-        .send(
-          "<html><body><h1>❌ Invalid Verification Link</h1><p>User not found.</p></body></html>",
-        );
+      return res.status(400).send("<html><body><h1>❌ Invalid Verification Link</h1><p>User not found.</p></body></html>");
     }
 
-    // Check if email is already verified
-    if (user.isEmailVerified) {
-      // Already verified - build login redirect
+    const buildRedirect = (user) => {
       const token = jwt.sign(
         { id: user._id, role: user.role, email: user.email },
-        process.env.JWT_SECRET || "dev_jwt_secret",
+        process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXPIRES_IN || "7d" },
       );
       const userPayload = encodeURIComponent(
-        Buffer.from(
-          JSON.stringify({
-            id: user._id,
-            fullName: user.fullName,
-            email: user.email,
-            role: user.role,
-            university: user.university,
-            college: user.college,
-            studentId: user.studentId,
-          }),
-        ).toString("base64"),
-      );
-      const dashboardUrl =
-        user.role === "student"
-          ? "http://127.0.0.1:5501/frontend/html/student-profile.html"
-          : "http://127.0.0.1:5501/frontend/html/instructor-profile.html";
-      return res.redirect(`${dashboardUrl}?token=${token}&user=${userPayload}`);
-    }
-
-    // Ensure the verification link is used within 24 hours of registration
-    const createdAt = user.createdAt || user._id.getTimestamp();
-    const ageMs = Date.now() - new Date(createdAt).getTime();
-    const maxAgeMs = 24 * 60 * 60 * 1000; // 24 hours
-
-    if (ageMs > maxAgeMs) {
-      // Link expired - delete user and show error
-      try {
-        await User.deleteOne({ _id: user._id });
-      } catch (delError) {
-        console.error(
-          "[WARNING] Failed to delete expired unverified user:",
-          delError.message,
-        );
-      }
-
-      return res
-        .status(400)
-        .send(
-          "<html><body><h1>⏰ Verification Link Expired</h1><p>The verification link has expired. Please register again.</p></body></html>",
-        );
-    }
-
-    // Mark email as verified
-    user.isEmailVerified = true;
-    await user.save();
-
-    // After verification generate JWT & redirect with token
-    const token = jwt.sign(
-      { id: user._id, role: user.role, email: user.email },
-      process.env.JWT_SECRET || "dev_jwt_secret",
-      { expiresIn: process.env.JWT_EXPIRES_IN || "7d" },
-    );
-    const userPayload = encodeURIComponent(
-      Buffer.from(
-        JSON.stringify({
+        Buffer.from(JSON.stringify({
           id: user._id,
           fullName: user.fullName,
           email: user.email,
@@ -521,62 +346,62 @@ router.get("/verify-email/:uid", async (req, res) => {
           university: user.university,
           college: user.college,
           studentId: user.studentId,
-        }),
-      ).toString("base64"),
-    );
-    const dashboardUrl =
-      user.role === "student"
-        ? "http://127.0.0.1:5501/frontend/html/student-profile.html"
-        : "http://127.0.0.1:5501/frontend/html/instructor-profile.html";
-    res.redirect(`${dashboardUrl}?token=${token}&user=${userPayload}`);
+        })).toString("base64"),
+      );
+      const dashboardUrl = user.role === "student"
+        ? process.env.STUDENT_DASHBOARD_URL || "http://127.0.0.1:5501/frontend/html/student-profile.html"
+        : process.env.INSTRUCTOR_DASHBOARD_URL || "http://127.0.0.1:5501/frontend/html/instructor-profile.html";
+      return `${dashboardUrl}?token=${token}&user=${userPayload}`;
+    };
+
+    if (user.isEmailVerified) {
+      return res.redirect(buildRedirect(user));
+    }
+
+    const createdAt = user.createdAt || user._id.getTimestamp();
+    const ageMs = Date.now() - new Date(createdAt).getTime();
+    const maxAgeMs = 24 * 60 * 60 * 1000;
+
+    if (ageMs > maxAgeMs) {
+      try {
+        await User.deleteOne({ _id: user._id });
+      } catch (delError) {
+        console.error("[WARNING] Failed to delete expired unverified user:", delError.message);
+      }
+      return res.status(400).send("<html><body><h1>⏰ Verification Link Expired</h1><p>The verification link has expired. Please register again.</p></body></html>");
+    }
+
+    user.isEmailVerified = true;
+    await user.save();
+
+    res.redirect(buildRedirect(user));
   } catch (error) {
     console.error("[ERROR] Direct email verification failed:", error.message);
-
-    res
-      .status(500)
-      .send(
-        "<html><body><h1>❌ Verification Failed</h1><p>An error occurred.</p></body></html>",
-      );
+    res.status(500).send("<html><body><h1>❌ Verification Failed</h1><p>An error occurred.</p></body></html>");
   }
 });
 
-/**
- * POST /login
- * Authenticate existing user and issue JWT
- */
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return res.status(400).json({
-        message: "Email and password are required",
-        code: "MISSING_FIELDS",
-      });
+      return res.status(400).json({ message: "Email and password are required", code: "MISSING_FIELDS" });
     }
     const emailLower = email.toLowerCase();
     const user = await User.findOne({ email: emailLower });
     if (!user) {
-      return res.status(401).json({
-        message: "Invalid email or password",
-        code: "INVALID_CREDENTIALS",
-      });
+      return res.status(401).json({ message: "Invalid email or password", code: "INVALID_CREDENTIALS" });
     }
     if (!user.isEmailVerified) {
-      return res.status(403).json({
-        message: "Please verify your email first",
-        code: "EMAIL_NOT_VERIFIED",
-      });
+      return res.status(403).json({ message: "Please verify your email first", code: "EMAIL_NOT_VERIFIED" });
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({
-        message: "Invalid email or password",
-        code: "INVALID_CREDENTIALS",
-      });
+      return res.status(401).json({ message: "Invalid email or password", code: "INVALID_CREDENTIALS" });
     }
     const token = jwt.sign(
       { id: user._id, role: user.role, email: user.email },
-      process.env.JWT_SECRET || "dev_jwt_secret",
+      process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN || "7d" },
     );
     res.status(200).json({
@@ -594,28 +419,16 @@ router.post("/login", async (req, res) => {
     });
   } catch (err) {
     console.error("[ERROR] Login failed:", err.message);
-    res.status(500).json({
-      message: "Internal server error",
-      code: "INTERNAL_SERVER_ERROR",
-    });
+    res.status(500).json({ message: "Internal server error", code: "INTERNAL_SERVER_ERROR" });
   }
 });
 
-/**
- * GET /me
- * Verify JWT token and return authenticated user data
- * Protected endpoint - requires valid JWT token in Authorization header
- */
 router.get("/me", authenticateToken, async (req, res) => {
   try {
-    const userId = req.user.id;
-    const user = await User.findById(userId);
+    const user = await User.findById(req.user.id);
 
     if (!user) {
-      return res.status(404).json({
-        message: "User not found",
-        code: "USER_NOT_FOUND",
-      });
+      return res.status(404).json({ message: "User not found", code: "USER_NOT_FOUND" });
     }
 
     res.status(200).json({
@@ -634,31 +447,18 @@ router.get("/me", authenticateToken, async (req, res) => {
     });
   } catch (err) {
     console.error("[ERROR] Token verification failed:", err.message);
-    res.status(401).json({
-      message: "Invalid or expired token",
-      code: "INVALID_TOKEN",
-    });
+    res.status(401).json({ message: "Invalid or expired token", code: "INVALID_TOKEN" });
   }
 });
 
-/**
- * POST /google-login
- * Authenticate user with Google OAuth - accepts Google ID token
- * Creates new user for profile completion or logs in existing user
- * Token contains user's Google account info and university email
- */
 router.post("/google-login", async (req, res) => {
   try {
     const { token: idToken } = req.body;
 
     if (!idToken) {
-      return res.status(400).json({
-        message: "Google ID token is required",
-        code: "MISSING_TOKEN",
-      });
+      return res.status(400).json({ message: "Google ID token is required", code: "MISSING_TOKEN" });
     }
 
-    // Verify Google token and extract user information
     const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
     let payload;
@@ -670,38 +470,27 @@ router.post("/google-login", async (req, res) => {
       payload = ticket.getPayload();
     } catch (err) {
       console.error("[ERROR] Google token verification failed:", err.message);
-      return res.status(401).json({
-        message: "Invalid Google token",
-        code: "INVALID_GOOGLE_TOKEN",
-      });
+      return res.status(401).json({ message: "Invalid Google token", code: "INVALID_GOOGLE_TOKEN" });
     }
 
-    // Extract email from Google payload
     const email = payload.email ? payload.email.toLowerCase() : null;
-    const googleId = payload.sub; // Google's unique user ID
+    const googleId = payload.sub;
     const googleName = payload.name || "User";
 
     if (!email) {
-      return res.status(400).json({
-        message: "Email not found in Google account",
-        code: "NO_EMAIL_IN_GOOGLE",
-      });
+      return res.status(400).json({ message: "Email not found in Google account", code: "NO_EMAIL_IN_GOOGLE" });
     }
 
-    // If the user is admin or super_admin, do not apply any email domain constraints
     let emailData;
-    let isAdminGoogle = false;
-    // Detect admin or super_admin by email (customize as needed)
-    // Here, if the email is already in the database as admin/super_admin, allow login with any domain
     let existingUser = await User.findOne({ email });
-    if (existingUser && (existingUser.role === 'admin' || existingUser.role === 'super_admin')) {
+
+    if (existingUser && (existingUser.role === "admin" || existingUser.role === "super_admin")) {
       emailData = {
         role: existingUser.role,
-        university: existingUser.university || 'N/A',
-        faculty: existingUser.college || 'N/A',
+        university: existingUser.university || "N/A",
+        faculty: existingUser.college || "N/A",
         studentId: existingUser.studentId || null,
       };
-      isAdminGoogle = true;
     } else {
       try {
         emailData = extractUserDataFromEmail(email);
@@ -714,94 +503,64 @@ router.post("/google-login", async (req, res) => {
       }
     }
 
-    // Check if user with this email already exists
     let user = await User.findOne({ email });
 
     if (user) {
-      // User exists
       if (user.authProvider === "local") {
-        // Local account exists - link Google to it but require password to confirm
         user.googleId = googleId;
         await user.save();
-        // ...existing code...
-      } else if (user.authProvider === "google") {
-        // Already a Google account - update googleId if different
-        if (user.googleId !== googleId) {
-          user.googleId = googleId;
-          await user.save();
-        }
+      } else if (user.authProvider === "google" && user.googleId !== googleId) {
+        user.googleId = googleId;
+        await user.save();
       }
 
-      // If profile is complete, user can login directly
       if (user.isProfileComplete) {
         const jwtToken = jwt.sign(
           { id: user._id, role: user.role, email: user.email },
-          process.env.JWT_SECRET || "dev_jwt_secret",
+          process.env.JWT_SECRET,
           { expiresIn: process.env.JWT_EXPIRES_IN || "7d" },
         );
-
         return res.status(200).json({
           message: "Google login successful",
           code: "GOOGLE_LOGIN_SUCCESS",
           needsProfileCompletion: false,
           token: jwtToken,
-          user: {
-            id: user._id,
-            fullName: user.fullName,
-            email: user.email,
-            role: user.role,
-            university: user.university,
-            college: user.college,
-            studentId: user.studentId,
-          },
+          user: { id: user._id, fullName: user.fullName, email: user.email, role: user.role, university: user.university, college: user.college, studentId: user.studentId },
         });
       } else {
-        // Profile incomplete - needs profile completion (for Google users only)
         const tempToken = jwt.sign(
           { id: user._id, email: user.email },
-          process.env.JWT_SECRET || "dev_jwt_secret",
+          process.env.JWT_SECRET,
           { expiresIn: "1h" },
         );
-
         return res.status(202).json({
           message: "Please complete your profile",
           code: "PROFILE_INCOMPLETE",
           needsProfileCompletion: true,
           token: tempToken,
-          user: {
-            id: user._id,
-            fullName: user.fullName,
-            email: user.email,
-            role: user.role,
-            university: user.university,
-            college: user.college,
-            studentId: user.studentId,
-          },
+          user: { id: user._id, fullName: user.fullName, email: user.email, role: user.role, university: user.university, college: user.college, studentId: user.studentId },
         });
       }
     } else {
-      // Create new Google user - password will be set in profile completion
-      // NULL password indicates incomplete profile
       user = await User.create({
         fullName: googleName,
         email: email,
-        password: null, // No password until profile completion
+        password: null,
         googleId: googleId,
         authProvider: "google",
         role: emailData.role,
         university: emailData.university,
         college: emailData.faculty,
         studentId: emailData.studentId,
-        isEmailVerified: true, // Google verified the email
-        isProfileComplete: false, // Mark as incomplete
+        isEmailVerified: true,
+        isProfileComplete: false,
       });
 
       console.log(`[INFO] New Google user created: ${email}`);
 
-      // Return temporary token for profile completion
       const tempToken = jwt.sign(
         { id: user._id, email: user.email },
-        process.env.JWT_SECRET || "dev_jwt_secret",
+        process.env.JWT_SECRET,
         { expiresIn: "1h" },
       );
 
@@ -810,89 +569,62 @@ router.post("/google-login", async (req, res) => {
         code: "PROFILE_INCOMPLETE",
         needsProfileCompletion: true,
         token: tempToken,
-        user: {
-          id: user._id,
-          fullName: user.fullName,
-          email: user.email,
-          role: user.role,
-          university: user.university,
-          college: user.college,
-          studentId: user.studentId,
-        },
+        user: { id: user._id, fullName: user.fullName, email: user.email, role: user.role, university: user.university, college: user.college, studentId: user.studentId },
       });
     }
   } catch (error) {
     console.error("[ERROR] Google login failed:", error.message);
-    res.status(500).json({
-      message: "An error occurred during Google login",
-      code: "GOOGLE_LOGIN_ERROR",
-    });
+    res.status(500).json({ message: "An error occurred during Google login", code: "GOOGLE_LOGIN_ERROR" });
   }
 });
 
-/**
- * POST /complete-profile
- * Complete user profile after Google OAuth signup
- * Updates user name, sets password, and marks profile as complete
- */
 router.post("/complete-profile", authenticateToken, async (req, res) => {
   try {
     const { fullName, password, confirmPassword } = req.body;
     const userId = req.user.id;
+
     if (!fullName || fullName.trim().length < 2) {
-      return res.status(400).json({
-        message: "Full name is required and must be at least 2 characters",
-        code: "INVALID_NAME",
-      });
+      return res.status(400).json({ message: "Full name is required and must be at least 2 characters", code: "INVALID_NAME" });
     }
     if (!password) {
-      return res.status(400).json({
-        message: "Password is required",
-        code: "PASSWORD_REQUIRED",
-      });
+      return res.status(400).json({ message: "Password is required", code: "PASSWORD_REQUIRED" });
     }
     if (password !== confirmPassword) {
-      return res.status(400).json({
-        message: "Password confirmation does not match",
-        code: "PASSWORD_MISMATCH",
-      });
+      return res.status(400).json({ message: "Password confirmation does not match", code: "PASSWORD_MISMATCH" });
     }
+
     const { isStrong, requirements } = validatePasswordStrength(password);
     if (!isStrong) {
-      return res.status(400).json({
-        message: "Password does not meet security requirements",
-        code: "WEAK_PASSWORD",
-        requirements: requirements,
-      });
+      return res.status(400).json({ message: "Password does not meet security requirements", code: "WEAK_PASSWORD", requirements });
     }
+
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({
-        message: "User not found",
-        code: "USER_NOT_FOUND",
-      });
+      return res.status(404).json({ message: "User not found", code: "USER_NOT_FOUND" });
     }
     if (user.isProfileComplete) {
-      return res.status(400).json({
-        message: "Profile is already complete",
-        code: "PROFILE_ALREADY_COMPLETE",
-      });
+      return res.status(400).json({ message: "Profile is already complete", code: "PROFILE_ALREADY_COMPLETE" });
     }
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
+
     let displayName = fullName.trim();
     if (user.role === "instructor" && !displayName.startsWith("Dr.")) {
       displayName = "Dr. " + displayName;
     }
+
     user.fullName = displayName;
     user.password = hashedPassword;
     user.isProfileComplete = true;
     await user.save();
+
     const jwtToken = jwt.sign(
       { id: user._id, role: user.role, email: user.email },
-      process.env.JWT_SECRET || "dev_jwt_secret",
+      process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN || "7d" },
     );
+
     res.status(200).json({
       message: "Profile completed successfully",
       code: "PROFILE_COMPLETED",
@@ -910,11 +642,7 @@ router.post("/complete-profile", authenticateToken, async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({
-      message: "An error occurred during profile completion",
-      code: "PROFILE_COMPLETION_ERROR",
-      details: error.message,
-    });
+    res.status(500).json({ message: "An error occurred during profile completion", code: "PROFILE_COMPLETION_ERROR", details: error.message });
   }
 });
 

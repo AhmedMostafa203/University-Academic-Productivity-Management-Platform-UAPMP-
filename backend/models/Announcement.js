@@ -31,10 +31,7 @@ const announcementSchema = new mongoose.Schema(
       enum: ["student", "instructor", "admin", "super_admin"],
       default: ["student"],
     },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
+    
   },
   { timestamps: true },
 );
