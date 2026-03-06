@@ -1,0 +1,469 @@
+/* Styles for instructor-profile new components (structure only)
+   Minimal, focused on layout and spacing — not colors.
+*/
+
+/* Metrics row */
+.metrics-row {
+    display: flex;
+    gap: 16px;
+    margin: 12px 0 20px;
+}
+
+.metric-card {
+    flex: 1;
+    background: var(--card-bg, #fff);
+    padding: 12px 16px;
+    border-radius: 8px;
+    box-shadow: var(--card-shadow, 0 1px 3px rgba(0, 0, 0, 0.06));
+}
+
+.metric-card h5 {
+    font-size: 13px;
+    margin: 0 0 6px;
+    color: var(--muted, #666);
+}
+
+.metric-value {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 6px
+}
+
+.metric-sub {
+    font-size: 12px;
+    color: var(--muted, #888)
+}
+
+/* Classes grid (student stylesheet provides core layout) */
+.classes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 16px 0 20px
+}
+
+/* instructor cards share the base .class-card rules from student profile, but we keep flex rule for row fallback */
+.class-card {
+    flex: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--card-bg, #fff);
+    box-shadow: var(--card-shadow, 0 1px 3px rgba(0, 0, 0, 0.06))
+}
+
+.card-header {
+    padding: 10px 12px;
+    color: #fff
+}
+
+.card-header span {
+    font-weight: 700
+}
+
+.card-header.blue-bg {
+    background: #3b82f6
+}
+
+.card-header.purple-bg {
+    background: #7c3aed
+}
+
+.card-body {
+    padding: 12px
+}
+
+.card-body h5 {
+    margin: 0 0 6px
+}
+
+.card-body .time {
+    font-size: 13px;
+    color: var(--muted, #666);
+    margin-bottom: 8px
+}
+
+
+/* Admins table */
+.table-card {
+    margin-top: 18px;
+    background: var(--card-bg, #fff);
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: var(--card-shadow, 0 1px 3px rgba(0, 0, 0, 0.06))
+}
+
+.admins-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px
+}
+
+.admins-table th,
+.admins-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06)
+}
+
+.btn-small {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: transparent;
+    cursor: pointer
+}
+
+/* Right column cards */
+.attendance-card,
+.recent-activity-card {
+    background: var(--card-bg, #fff);
+    padding: 14px;
+    border-radius: 8px;
+    box-shadow: var(--card-shadow, 0 1px 3px rgba(0, 0, 0, 0.06));
+    margin-bottom: 16px
+}
+
+.attendance-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center
+}
+
+.attendance-info h5 {
+    margin: 0 0 6px
+}
+
+.attendance-info p {
+    margin: 0 0 10px;
+    color: var(--muted, #666)
+}
+
+.btn-primary {
+    background: var(--primary, #2563eb);
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer
+}
+
+.attendance-stats {
+    min-width: 140px;
+    text-align: right
+}
+
+.percent {
+    font-weight: 700
+}
+
+.mini-progress {
+    height: 8px;
+    background: linear-gradient(90deg, #10b981 0%, #d1fae5 100%);
+    border-radius: 6px;
+    margin-top: 8px
+}
+
+/* Recent activity */
+.recent-list {
+    list-style: none;
+    padding: 0;
+    margin: 0
+}
+
+.recent-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06)
+}
+
+.recent-list li p {
+    margin: 6px 0 0;
+    font-size: 13px;
+    color: var(--muted, #666)
+}
+
+.view-all {
+    display: inline-block;
+    margin-top: 8px;
+    color: var(--link, #2563eb);
+    text-decoration: none
+}
+
+/* Responsive */
+@media (max-width:900px) {
+    .metrics-row {
+        flex-direction: column
+    }
+
+    .attendance-main {
+        flex-direction: column;
+        align-items: flex-start
+    }
+}
+
+
+/* statistics section styling */
+.stats-row {
+    display: flex;
+    gap: 16px;
+    margin: 24px 0;
+}
+
+/* stat-card styling (moved earlier) */
+.stat-card {
+    flex: 1;
+    padding: 16px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.stat-card h5 {
+    font-size: 14px;
+    margin: 4px 0;
+    color: var(--muted, #666);
+}
+
+.stat-card p {
+    font-size: 13px;
+    margin: 2px 0;
+    color: var(--text, #555);
+}
+
+@keyframes progress {
+    0% {
+        stroke-dasharray: 0, 100
+    }
+}
+
+@media (max-width:900px) {
+    .stats-row {
+        flex-direction: column
+    }
+}
+
+/* Dark Mode Theme */
+
+body.dark-mode {
+    background-color: #0f172a;
+    color: #e2e8f0;
+    /* base variables to simplify component overrides */
+    --muted: #94a3b8;
+    --text: #e2e8f0;
+    --link: #60a5fa;
+    --card-bg: #1a1f2e;
+    --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Sidebar - Dark Mode */
+body.dark-mode .sidebar {
+    background: #1a1f2e;
+    border-right: 1px solid #2d3748;
+}
+
+body.dark-mode .logo-icon {
+    color: #60a5fa;
+}
+
+body.dark-mode .logo-text h1 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .logo-text span {
+    color: #94a3b8;
+}
+
+body.dark-mode .menu-item {
+    color: #cbd5e1;
+}
+
+body.dark-mode .menu-item:hover:not(.active) {
+    background: #2d3748;
+    color: #e2e8f0;
+}
+
+body.dark-mode .menu-item.active {
+    background: #1e40af;
+    color: #e0e7ff;
+    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.2);
+}
+
+body.dark-mode .sidebar-footer {
+    border-top: 1px solid #2d3748;
+}
+
+body.dark-mode .user-name {
+    color: #e2e8f0;
+}
+
+body.dark-mode .user-id {
+    color: #94a3b8;
+}
+
+/* Header Dark Mode */
+body.dark-mode .header {
+    background: transparent;
+}
+
+body.dark-mode .header h2 {
+    color: #e2e8f0;
+}
+
+/* Card & Section Dark Mode */
+body.dark-mode .welcome-banner,
+body.dark-mode .class-card,
+body.dark-mode .recent-grades,
+body.dark-mode .side-card,
+body.dark-mode .search-bar {
+    background: #1a1f2e;
+    border-color: #2d3748;
+}
+
+body.dark-mode .welcome-banner:hover,
+body.dark-mode .class-card:hover,
+body.dark-mode .recent-grades:hover,
+body.dark-mode .side-card:hover {
+    border-color: #3f4758;
+}
+
+body.dark-mode .banner-circle {
+    background: rgba(30, 64, 175, 0.1);
+}
+
+body.dark-mode .card-header span {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+body.dark-mode .btn-details {
+    background: #2d3748;
+    color: #cbd5e1;
+}
+
+body.dark-mode .btn-details:hover {
+    background: #3f4758;
+    color: #e2e8f0;
+}
+
+/* Table Dark Mode */
+body.dark-mode .grades-table th {
+    color: #cbd5e1;
+    border-bottom-color: #2d3748;
+}
+
+body.dark-mode .grades-table td {
+    border-bottom-color: #2d3748;
+    color: #cbd5e1;
+}
+
+body.dark-mode .grades-table tr:hover {
+    background-color: #1e40af20;
+}
+
+body.dark-mode .grade-tag {
+    background: rgba(16, 185, 129, 0.2);
+    color: #6ee7b7;
+}
+
+body.dark-mode .grade-tag.a-grade {
+    background: rgba(16, 185, 129, 0.25);
+    color: #a7f3d0;
+}
+
+/* Input Elements Dark Mode */
+body.dark-mode input,
+body.dark-mode select {
+    background: #1a1f2e;
+    color: #e2e8f0;
+    border-color: #2d3748;
+}
+
+body.dark-mode input:focus,
+body.dark-mode select:focus {
+    border-color: #60a5fa;
+    background: #1a1f2e;
+}
+
+body.dark-mode input::placeholder {
+    color: #64748b;
+}
+
+/* Badge & Text Dark Mode */
+body.dark-mode .badge {
+    background: #2d3748;
+    color: #cbd5e1;
+}
+
+body.dark-mode .banner-text h3,
+body.dark-mode .side-card h4 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .banner-text p,
+body.dark-mode .attendance-text p,
+body.dark-mode .prof,
+body.dark-mode .time,
+body.dark-mode .section-header a {
+    color: #94a3b8;
+}
+
+body.dark-mode .task-info p {
+    color: #cbd5e1;
+}
+
+/* Logout Button Dark Mode */
+body.dark-mode .logout-btn {
+    color: #94a3b8;
+}
+
+body.dark-mode .logout-btn:hover {
+    color: #fca5a5;
+}
+
+body.dark-mode #themeToggle.fa-sun:hover {
+    color: #fbbf24;
+}
+
+/* extra dark-mode tweaks */
+body.dark-mode .stat-card h5 {
+    color: #94a3b8;
+}
+
+body.dark-mode .stat-card p {
+    color: #cbd5e1;
+}
+
+body.dark-mode .circular-progress circle.bg {
+    stroke: #2d3748;
+}
+
+body.dark-mode .circular-progress.green circle.prog {
+    stroke: #10b981;
+}
+
+body.dark-mode .percentage {
+    color: #e2e8f0;
+}
+
+body.dark-mode .mini-progress {
+    background: linear-gradient(90deg, #10b981 0%, #2d3748 100%);
+}
+
+/* Logout Button */
+.logout-btn {
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.logout-btn:hover {
+    color: #ef4444;
+    transform: scale(1.1);
+}
+
+/* circular percentage chart inside stats - placed last to avoid overrides */
+@keyframes progress {
+    0% {
+        stroke-dasharray: 0, 100
+    }
+}
