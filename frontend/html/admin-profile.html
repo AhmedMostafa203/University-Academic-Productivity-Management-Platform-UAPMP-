@@ -1,0 +1,534 @@
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>UAPMP Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#135bec",
+              "background-light": "#f6f6f8",
+              "background-dark": "#101622",
+              "sidebar-dark": "#1a2234",
+            },
+            fontFamily: {
+              display: ["Inter", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
+    </script>
+    <script>
+      // Logout button functionality (runs after DOM is loaded)
+      document.addEventListener("DOMContentLoaded", function () {
+        const logoutBtn = document.getElementById("logoutBtn");
+        if (logoutBtn) {
+          logoutBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            window.location.href = "signin.html";
+          });
+        }
+      });
+    </script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      .active-nav {
+        background-color: rgba(19, 91, 236, 0.1);
+        color: #135bec;
+        border-right: 4px solid #135bec;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100"
+  >
+    <div class="flex h-screen overflow-hidden">
+      <!-- Sidebar -->
+      <aside class="w-64 bg-sidebar-dark text-slate-300 flex flex-col shrink-0">
+        <div class="p-6 flex items-center gap-3">
+          <div
+            class="size-10 bg-primary rounded-lg flex items-center justify-center text-white"
+          >
+            <span class="material-symbols-outlined">school</span>
+          </div>
+          <div>
+            <h1 class="text-white font-bold text-lg leading-tight">UAPMP</h1>
+            <p class="text-xs text-slate-400">Admin Console</p>
+          </div>
+        </div>
+        <nav class="flex-1 px-4 py-4 space-y-2">
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary/10 text-primary border-r-4 border-primary"
+            href="#"
+          >
+            <span class="material-symbols-outlined">dashboard</span>
+            <span class="text-sm font-medium">Dashboard</span>
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors"
+            href="admin-announcements.html"
+          >
+            <span class="material-symbols-outlined">campaign</span>
+            <span class="text-sm font-medium">Announcements</span>
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors"
+            href="#"
+          >
+            <span class="material-symbols-outlined">group</span>
+            <span class="text-sm font-medium">Users</span>
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors"
+            href="#"
+          >
+            <span class="material-symbols-outlined">menu_book</span>
+            <span class="text-sm font-medium">Courses</span>
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors"
+            href="#"
+          >
+            <span class="material-symbols-outlined">assessment</span>
+            <span class="text-sm font-medium">Reports</span>
+          </a>
+        </nav>
+        <div class="p-4 border-t border-slate-700/50">
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors"
+            href="#"
+          >
+            <span class="material-symbols-outlined">settings</span>
+            <span class="text-sm font-medium">Settings</span>
+          </a>
+          <a
+            id="logoutBtn"
+            class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-red-500/10 text-red-400 transition-colors mt-2"
+            href="#"
+          >
+            <span class="material-symbols-outlined">logout</span>
+            <span class="text-sm font-medium">Logout</span>
+          </a>
+        </div>
+      </aside>
+      <!-- Main Content -->
+      <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <!-- Header -->
+        <header
+          class="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-8 shrink-0"
+        >
+          <div class="flex items-center gap-4 flex-1">
+            <div class="relative w-full max-w-md">
+              <span
+                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg"
+                >search</span
+              >
+              <input
+                class="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-sm focus:ring-2 focus:ring-primary/20"
+                placeholder="Search for students, faculty, or resources..."
+                type="text"
+              />
+            </div>
+          </div>
+          <div class="flex items-center gap-6">
+            <button
+              class="relative text-slate-500 hover:text-primary transition-colors"
+            >
+              <span class="material-symbols-outlined">notifications</span>
+              <span
+                class="absolute top-0 right-0 size-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"
+              ></span>
+            </button>
+            <div
+              class="flex items-center gap-3 pl-6 border-l border-slate-200 dark:border-slate-800"
+            >
+              <div class="text-right hidden sm:block">
+                <p
+                  class="text-sm font-semibold text-slate-900 dark:text-slate-100"
+                  id="welcomeName"
+                >
+                  Loading...
+                </p>
+              </div>
+              <img
+                alt="Admin Profile"
+                class="size-10 rounded-full object-cover ring-2 ring-primary/10"
+                id="avatarImg"
+                src="https://ui-avatars.com/api/?name=Admin&background=random"
+              />
+            </div>
+          </div>
+        </header>
+        <!-- Dashboard Body -->
+        <div
+          class="flex-1 overflow-y-auto p-8 bg-background-light dark:bg-background-dark"
+        >
+          <!-- Welcome Card -->
+          <div
+            class="relative overflow-hidden bg-primary rounded-xl p-8 mb-8 text-white shadow-lg shadow-primary/20"
+          >
+            <div
+              class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6"
+            >
+              <div class="max-w-2xl">
+                <h2 class="text-2xl font-bold mb-2">Welcome back</h2>
+                <p class="text-primary-100 opacity-90 text-lg" id="adminEmail">
+                  Email: --
+                </p>
+                <p class="text-primary-100 opacity-90 text-lg" id="adminRole">
+                  Role: --
+                </p>
+              </div>
+              <div class="hidden lg:block">
+                <span
+                  class="material-symbols-outlined text-[120px] opacity-20 select-none"
+                  >analytics</span
+                >
+              </div>
+            </div>
+            <!-- Decorative patterns -->
+            <div
+              class="absolute top-0 right-0 -mr-20 -mt-20 size-64 bg-white/10 rounded-full blur-3xl"
+            ></div>
+            <div
+              class="absolute bottom-0 left-0 -ml-20 -mb-20 size-64 bg-black/10 rounded-full blur-3xl"
+            ></div>
+          </div>
+          <!-- Stats Grid -->
+          <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200 mb-4">
+            Quick Statistics
+          </h3>
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+          >
+            <div
+              class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm"
+            >
+              <div class="flex items-center justify-between mb-4">
+                <div
+                  class="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400"
+                >
+                  <span class="material-symbols-outlined">group</span>
+                </div>
+                <span
+                  class="text-green-500 text-xs font-bold flex items-center gap-1"
+                >
+                  <span class="material-symbols-outlined text-sm"
+                    >trending_up</span
+                  >
+                  2.5%
+                </span>
+              </div>
+              <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">
+                Total Students
+              </p>
+              <h4
+                class="text-2xl font-bold text-slate-900 dark:text-white mt-1"
+              >
+                12,450
+              </h4>
+            </div>
+            <div
+              class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm"
+            >
+              <div class="flex items-center justify-between mb-4">
+                <div
+                  class="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg text-purple-600 dark:text-purple-400"
+                >
+                  <span class="material-symbols-outlined"
+                    >person_celebrate</span
+                  >
+                </div>
+                <span
+                  class="text-red-500 text-xs font-bold flex items-center gap-1"
+                >
+                  <span class="material-symbols-outlined text-sm"
+                    >trending_down</span
+                  >
+                  0.4%
+                </span>
+              </div>
+              <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">
+                Active Faculty
+              </p>
+              <h4
+                class="text-2xl font-bold text-slate-900 dark:text-white mt-1"
+              >
+                842
+              </h4>
+            </div>
+            <div
+              class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm"
+            >
+              <div class="flex items-center justify-between mb-4">
+                <div
+                  class="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg text-amber-600 dark:text-amber-400"
+                >
+                  <span class="material-symbols-outlined">menu_book</span>
+                </div>
+                <span
+                  class="text-green-500 text-xs font-bold flex items-center gap-1"
+                >
+                  <span class="material-symbols-outlined text-sm"
+                    >trending_up</span
+                  >
+                  1.2%
+                </span>
+              </div>
+              <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">
+                Active Courses
+              </p>
+              <h4
+                class="text-2xl font-bold text-slate-900 dark:text-white mt-1"
+              >
+                156
+              </h4>
+            </div>
+            <div
+              class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm"
+            >
+              <div class="flex items-center justify-between mb-4">
+                <div
+                  class="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg text-emerald-600 dark:text-emerald-400"
+                >
+                  <span class="material-symbols-outlined"
+                    >account_balance_wallet</span
+                  >
+                </div>
+                <span
+                  class="text-green-500 text-xs font-bold flex items-center gap-1"
+                >
+                  <span class="material-symbols-outlined text-sm"
+                    >trending_up</span
+                  >
+                  4.8%
+                </span>
+              </div>
+              <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">
+                Revenue Growth
+              </p>
+              <h4
+                class="text-2xl font-bold text-slate-900 dark:text-white mt-1"
+              >
+                $1.2M
+              </h4>
+            </div>
+          </div>
+          <!-- Main Widgets Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Recent Activity Placeholder -->
+            <div
+              class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col min-h-[400px]"
+            >
+              <div
+                class="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between"
+              >
+                <h3 class="font-bold text-slate-800 dark:text-slate-200">
+                  Recent Registrations
+                </h3>
+                <button
+                  class="text-primary text-sm font-semibold hover:underline"
+                >
+                  View All
+                </button>
+              </div>
+              <div
+                class="flex-1 flex flex-col items-center justify-center p-12 text-center"
+              >
+                <div
+                  class="size-20 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4"
+                >
+                  <span
+                    class="material-symbols-outlined text-slate-400 text-3xl"
+                    >inbox_customize</span
+                  >
+                </div>
+                <h4 class="text-slate-900 dark:text-white font-semibold">
+                  No recent registrations today
+                </h4>
+                <p
+                  class="text-slate-500 dark:text-slate-400 text-sm max-w-xs mt-2"
+                >
+                  New student registrations will appear here as they are
+                  submitted through the portal.
+                </p>
+              </div>
+            </div>
+            <!-- Side Notifications Placeholder -->
+            <div
+              class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col"
+            >
+              <div class="p-6 border-b border-slate-200 dark:border-slate-800">
+                <h3 class="font-bold text-slate-800 dark:text-slate-200">
+                  System Alerts
+                </h3>
+              </div>
+              <div class="p-6 space-y-4">
+                <div
+                  class="flex gap-4 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900/30 rounded-lg"
+                >
+                  <span
+                    class="material-symbols-outlined text-amber-600 dark:text-amber-400"
+                    >warning</span
+                  >
+                  <div>
+                    <p
+                      class="text-sm font-bold text-amber-800 dark:text-amber-300"
+                    >
+                      Server Maintenance
+                    </p>
+                    <p class="text-xs text-amber-700 dark:text-amber-400 mt-1">
+                      Scheduled maintenance in 2 hours. Expect brief downtime.
+                    </p>
+                  </div>
+                </div>
+                <div
+                  class="flex gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg"
+                >
+                  <span class="material-symbols-outlined text-primary"
+                    >info</span
+                  >
+                  <div>
+                    <p
+                      class="text-sm font-bold text-slate-800 dark:text-slate-200"
+                    >
+                      New Policy Draft
+                    </p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                      Academic board has shared a new policy draft for review.
+                    </p>
+                  </div>
+                </div>
+                <div
+                  class="flex gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg"
+                >
+                  <span class="material-symbols-outlined text-primary"
+                    >info</span
+                  >
+                  <div>
+                    <p
+                      class="text-sm font-bold text-slate-800 dark:text-slate-200"
+                    >
+                      Library Updates
+                    </p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                      Digital library integration completed for the Humanities
+                      dept.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="p-6 mt-auto border-t border-slate-200 dark:border-slate-800"
+              >
+                <button
+                  class="w-full py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                >
+                  Manage Alerts
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script src="../config.js"></script>
+    <script>
+      // Load admin data from localStorage
+      (function loadAdminData() {
+        const userJson = localStorage.getItem("user");
+        if (userJson) {
+          try {
+            const user = JSON.parse(userJson);
+            document.getElementById("welcomeName").textContent = user.name;
+            document.getElementById("adminRole").textContent =
+              `Role: ${user.role || "admin"}`;
+            document.getElementById("adminEmail").textContent =
+              `Email: ${user.email || "--"}`;
+            document.getElementById("avatarImg").src =
+              `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || "Admin")}&background=random`;
+            document.getElementById("welcomeBanner").innerHTML =
+              `Welcome back, ${user.name || "Admin"}! 👋`;
+          } catch {}
+        }
+      })();
+      // Fix Announcements link
+      const announcementsLink = document.querySelector(
+        "nav.flex-1 a span.material-symbols-outlined:contains('campaign')",
+      )?.parentElement?.parentElement;
+      if (announcementsLink) {
+        announcementsLink.setAttribute("href", "admin-announcements.html");
+      }
+      // Guard: ensure admin role
+      (function guard() {
+        const token = localStorage.getItem("token");
+        const userJson = localStorage.getItem("user");
+        if (!token || !userJson) {
+          window.location.href = "signin.html";
+          return;
+        }
+        try {
+          const user = JSON.parse(userJson);
+          if (user.role !== "admin" && user.role !== "super_admin") {
+            window.location.href = "signin.html";
+            return;
+          }
+        } catch {
+          window.location.href = "signin.html";
+        }
+      })();
+      // Admin authentication guard
+      (function adminGuard() {
+        const token = localStorage.getItem("token");
+        const userJson = localStorage.getItem("user");
+        if (!token || !userJson) {
+          window.location.href = "signin.html";
+          return;
+        }
+        try {
+          const user = JSON.parse(userJson);
+          if (user.role !== "admin" && user.role !== "super_admin") {
+            window.location.href = "signin.html";
+            return;
+          }
+        } catch {
+          window.location.href = "signin.html";
+        }
+      })();
+    </script>
+  </body>
+</html>
