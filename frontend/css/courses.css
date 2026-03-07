@@ -1,3 +1,28 @@
+/* Info row for enrolled class cards (copied from instructor-profile.css) */
+.course-card .info-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  margin: 10px 0 0 0;
+  align-items: center;
+}
+
+.course-card .info-row span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #64748b;
+  background: #f1f5f9;
+  border-radius: 8px;
+  padding: 4px 10px;
+}
+
+.course-card .info-row i {
+  color: #2563eb;
+  font-size: 15px;
+}
+
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 * {
@@ -22,19 +47,19 @@ body {
 /* Tablets */
 @media (max-width: 1024px) {
 
-  .sidebar{
+  .sidebar {
     width: 220px;
   }
 
-  .main-content{
+  .main-content {
     padding: 25px;
   }
 
-  .search-bar input{
+  .search-bar input {
     width: 180px;
   }
 
-  .courses-grid{
+  .courses-grid {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   }
 
@@ -44,11 +69,11 @@ body {
 /* Mobile */
 @media (max-width: 768px) {
 
-  .container{
+  .container {
     flex-direction: column;
   }
 
-  .sidebar{
+  .sidebar {
     width: 100%;
     flex-direction: row;
     align-items: center;
@@ -56,26 +81,26 @@ body {
     padding: 15px;
   }
 
-  .menu{
+  .menu {
     display: none;
   }
 
-  .main-content{
+  .main-content {
     padding: 20px;
   }
 
-  .header{
+  .header {
     flex-direction: column;
     gap: 15px;
     align-items: flex-start;
   }
 
-  .header-right{
+  .header-right {
     width: 100%;
     justify-content: space-between;
   }
 
-  .search-bar input{
+  .search-bar input {
     width: 140px;
   }
 
@@ -85,15 +110,15 @@ body {
 /* Small Mobile */
 @media (max-width: 480px) {
 
-  .courses-grid{
+  .courses-grid {
     grid-template-columns: 1fr;
   }
 
-  .search-bar input{
+  .search-bar input {
     width: 100px;
   }
 
-  .header-icons{
+  .header-icons {
     gap: 10px;
   }
 
@@ -104,6 +129,7 @@ body {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -254,9 +280,10 @@ body {
 }
 
 .search-bar:focus-within {
-    width: 300px; /* يتوسع شريط البحث عند الضغط عليه */
-    border-color: #2563eb;
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.05);
+  width: 300px;
+  /* يتوسع شريط البحث عند الضغط عليه */
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.05);
 }
 
 .header-icons {
@@ -280,26 +307,32 @@ body {
 }
 
 .header-icons i:hover {
-    color: #2563eb;
-    transform: scale(1.2); /* تكبير بسيط للأيقونة */
-    cursor: pointer;
+  color: #2563eb;
+  transform: scale(1.2);
+  /* تكبير بسيط للأيقونة */
+  cursor: pointer;
 }
 
 
 /* الـ Progress Circle Animation */
 @keyframes progressLoad {
-    from { stroke-dashoffset: 220; }
-    to { stroke-dashoffset: 20; }
+  from {
+    stroke-dashoffset: 220;
+  }
+
+  to {
+    stroke-dashoffset: 20;
+  }
 }
 
 .circular-progress circle.prog {
-    animation: progressLoad 1.5s ease-out forwards;
+  animation: progressLoad 1.5s ease-out forwards;
 }
 
 /* لمسة جمالية للصور */
 img:hover {
-    filter: brightness(1.1);
-    transform: scale(1.05);
+  filter: brightness(1.1);
+  transform: scale(1.05);
 }
 
 /* Courses Grid */
@@ -333,24 +366,31 @@ img:hover {
 .blue-bg {
   background: linear-gradient(to right, #3b82f6, #6366f1);
 }
+
 .green-bg {
   background: linear-gradient(to right, #10b981, #14b8a6);
 }
+
 .orange-bg {
   background: linear-gradient(to right, #f97316, #fbbf24);
 }
+
 .sky-bg {
   background: linear-gradient(to right, #0ea5e9, #3b82f6);
 }
+
 .pink-bg {
   background: linear-gradient(to right, #ec4899, #f43f5e);
 }
+
 .teal-bg {
   background: linear-gradient(to right, #14b8a6, #2dd4bf);
 }
+
 .gold-bg {
   background: linear-gradient(to right, #eab308, #f59e0b);
 }
+
 .magenta-bg {
   background: linear-gradient(to right, #d946ef, #a855f7);
 }
@@ -367,15 +407,18 @@ img:hover {
 .card-body {
   padding: 20px;
 }
+
 .card-body h5 {
   font-size: 15px;
   margin-bottom: 5px;
   font-weight: 700;
 }
+
 .prof {
   font-size: 12px;
   color: #94a3b8;
 }
+
 .time {
   font-size: 11px;
   margin-top: 15px;
@@ -487,50 +530,52 @@ body.dark-mode #themeToggle.fa-sun {
 
 /* تنسيق الرابط ليكون مثل الأيقونة تماماً */
 .icon-wrapper {
-    text-decoration: none; 
-    color: inherit;   
-    position: relative;
-    display: flex;
-    align-items: center;
-    transition: 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  display: flex;
+  align-items: center;
+  transition: 0.3s ease;
 }
 
 .join-icon {
-    font-size: 20px;
-    color: #64748b; /* اللون الرمادي الموحد في الهيدر */
-    transition: 0.3s ease;
+  font-size: 20px;
+  color: #64748b;
+  /* اللون الرمادي الموحد في الهيدر */
+  transition: 0.3s ease;
 }
 
 /* تأثير الهوفر على الأيقونة داخل الرابط */
 .icon-wrapper:hover .join-icon {
-    color: #2563eb;    /* اللون الأزرق */
-    transform: scale(1.2); /* التكبير المطلوب */
+  color: #2563eb;
+  /* اللون الأزرق */
+  transform: scale(1.2);
+  /* التكبير المطلوب */
 }
 
 
 .icon-wrapper::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: -35px;
-    left: 50%;
-    transform: translateX(-50%) translateY(10px);
-    background: #1e293b;
-    color: #fff;
-    padding: 5px 12px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 500;
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    transition: 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    z-index: 1000;
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: -35px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: #1e293b;
+  color: #fff;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
 }
 
 .icon-wrapper:hover::after {
-    opacity: 1;
-    visibility: visible;
-    transform: translateX(-50%) translateY(0);
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
 }
-

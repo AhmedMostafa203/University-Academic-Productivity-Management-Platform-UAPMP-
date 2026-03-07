@@ -7,6 +7,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const crypto = require("crypto");
 const Class = require("../models/Class");
+const COURSE_CODES = require("../constants/courseCodes");
 const { authenticateToken, authorizeRole } = require("../middleware/auth");
 
 const router = express.Router();
@@ -15,30 +16,32 @@ const router = express.Router();
 // HELPER
 // ============================================
 
-/**
- * Generates a random 6-character uppercase join code
- * @returns {string}
- */
 const generateJoinCode = () => {
-  return crypto.randomBytes(3).toString("hex").toUpperCase(); // e.g. "A3F9C2"
+  return crypto.randomBytes(3).toString("hex").toUpperCase();
 };
 
 // ============================================
-// CLASS ENDPOINTS
+// CREATE CLASS
 // ============================================
 
-/**
- * POST /classes
- * Instructor creates a new class
- * Body: { name, description }
- */
 router.post(
   "/",
   authenticateToken,
   authorizeRole("instructor"),
   async (req, res) => {
     try {
-      const { name, description } = req.body;
+      const { name, description, courseCode, semester, year, section } =
+        req.body;
+      console.log("[CREATE CLASS DEBUG] req.body:", req.body);
+
+      if (!Object.keys(COURSE_CODES).includes(courseCode)) {
+        return res.status(400).json({
+          message:
+            "Invalid course code. Allowed codes: " +
+            Object.keys(COURSE_CODES).join(", "),
+          code: "INVALID_COURSE_CODE",
+        });
+      }
 
       if (!name || name.trim().length === 0) {
         return res.status(400).json({
@@ -47,9 +50,9 @@ router.post(
         });
       }
 
-      // Generate a unique join code
       let joinCode;
       let isUnique = false;
+
       while (!isUnique) {
         joinCode = generateJoinCode();
         const existing = await Class.findOne({ joinCode });
@@ -61,6 +64,10 @@ router.post(
         description: description ? description.trim() : null,
         instructor: req.user._id,
         joinCode,
+        courseCode,
+        semester,
+        year,
+        section,
       });
 
       res.status(201).json({
@@ -69,20 +76,21 @@ router.post(
         class: newClass,
       });
     } catch (err) {
-      console.error("[ERROR] Create class failed:", err.message);
+      console.error("[ERROR] Create class failed:", err.message, err.stack);
       res.status(500).json({
         message: "Failed to create class",
         code: "INTERNAL_SERVER_ERROR",
+        error: err.message,
+        stack: err.stack,
       });
     }
   },
 );
 
-/**
- * POST /classes/join
- * Student joins a class using a join code
- * Body: { joinCode }
- */
+// ============================================
+// JOIN CLASS
+// ============================================
+
 router.post(
   "/join",
   authenticateToken,
@@ -111,25 +119,33 @@ router.post(
 
       if (!foundClass.isActive) {
         return res.status(403).json({
-          message: "This class is no longer accepting students",
+          message: "This class is not accepting students",
           code: "CLASS_INACTIVE",
         });
       }
 
-      // Check if student already enrolled
+      // Prevent instructor joining their own class
+      if (foundClass.instructor.toString() === req.user._id.toString()) {
+        return res.status(400).json({
+          message: "Instructor cannot join their own class",
+          code: "INVALID_ACTION",
+        });
+      }
+
       const alreadyEnrolled = foundClass.students.some(
         (s) => s.toString() === req.user._id.toString(),
       );
 
       if (alreadyEnrolled) {
         return res.status(409).json({
-          message: "You are already enrolled in this class",
+          message: "Already enrolled in this class",
           code: "ALREADY_ENROLLED",
         });
       }
 
-      foundClass.students.push(req.user._id);
-      await foundClass.save();
+      await Class.findByIdAndUpdate(foundClass._id, {
+        $addToSet: { students: req.user._id },
+      });
 
       res.status(200).json({
         message: "Joined class successfully",
@@ -138,7 +154,10 @@ router.post(
           id: foundClass._id,
           name: foundClass.name,
           description: foundClass.description,
-          joinCode: foundClass.joinCode,
+          courseCode: foundClass.courseCode,
+          semester: foundClass.semester,
+          year: foundClass.year,
+          section: foundClass.section,
         },
       });
     } catch (err) {
@@ -151,12 +170,39 @@ router.post(
   },
 );
 
-/**
- * GET /classes/my
- * Get all classes for the current user
- * Students see classes they enrolled in
- * Instructors see classes they created
- */
+// ============================================
+// LEAVE CLASS (NEW FEATURE)
+// ============================================
+
+router.delete(
+  "/leave/:id",
+  authenticateToken,
+  authorizeRole("student"),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      await Class.findByIdAndUpdate(id, {
+        $pull: { students: req.user._id },
+      });
+
+      res.json({
+        message: "You left the class successfully",
+        code: "CLASS_LEFT",
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: "Failed to leave class",
+        code: "INTERNAL_SERVER_ERROR",
+      });
+    }
+  },
+);
+
+// ============================================
+// GET USER CLASSES
+// ============================================
+
 router.get("/my", authenticateToken, async (req, res) => {
   try {
     let classes;
@@ -164,29 +210,27 @@ router.get("/my", authenticateToken, async (req, res) => {
     if (req.user.role === "student") {
       classes = await Class.find({ students: req.user._id })
         .populate("instructor", "fullName email")
-        .select("-students")
         .sort({ createdAt: -1 })
         .lean();
     } else if (req.user.role === "instructor") {
       classes = await Class.find({ instructor: req.user._id })
+        .populate("instructor", "fullName email")
         .sort({ createdAt: -1 })
         .lean();
     } else {
-      // Admin sees all classes
       classes = await Class.find({})
         .populate("instructor", "fullName email")
         .sort({ createdAt: -1 })
         .lean();
     }
 
-    res.status(200).json({
+    res.json({
       message: "Classes fetched successfully",
       code: "CLASSES_FETCHED",
       count: classes.length,
       classes,
     });
   } catch (err) {
-    console.error("[ERROR] Get classes failed:", err.message);
     res.status(500).json({
       message: "Failed to fetch classes",
       code: "INTERNAL_SERVER_ERROR",
@@ -194,10 +238,10 @@ router.get("/my", authenticateToken, async (req, res) => {
   }
 });
 
-/**
- * GET /classes/:id
- * Get a single class by ID with its students
- */
+// ============================================
+// GET CLASS DETAILS
+// ============================================
+
 router.get("/:id", authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
@@ -220,10 +264,11 @@ router.get("/:id", authenticateToken, async (req, res) => {
       });
     }
 
-    // Only instructor of this class or admin can see full details
     const isInstructor =
       foundClass.instructor._id.toString() === req.user._id.toString();
+
     const isAdmin = ["admin", "super_admin"].includes(req.user.role);
+
     const isEnrolled = foundClass.students.some(
       (s) => s._id.toString() === req.user._id.toString(),
     );
@@ -235,13 +280,12 @@ router.get("/:id", authenticateToken, async (req, res) => {
       });
     }
 
-    res.status(200).json({
+    res.json({
       message: "Class fetched successfully",
       code: "CLASS_FETCHED",
       class: foundClass,
     });
   } catch (err) {
-    console.error("[ERROR] Get class failed:", err.message);
     res.status(500).json({
       message: "Failed to fetch class",
       code: "INTERNAL_SERVER_ERROR",
@@ -249,20 +293,58 @@ router.get("/:id", authenticateToken, async (req, res) => {
   }
 });
 
-/**
- * DELETE /classes/:id
- * Instructor deletes their own class
- */
-router.delete("/:id", authenticateToken, async (req, res) => {
+// ============================================
+// REGENERATE JOIN CODE (NEW FEATURE)
+// ============================================
+
+router.patch("/:id/regenerate-code", authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({
-        message: "Invalid class ID",
-        code: "INVALID_ID",
+    const foundClass = await Class.findById(id);
+
+    if (!foundClass) {
+      return res.status(404).json({
+        message: "Class not found",
       });
     }
+
+    if (foundClass.instructor.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        message: "Only instructor can regenerate join code",
+      });
+    }
+
+    let newCode;
+    let unique = false;
+
+    while (!unique) {
+      newCode = generateJoinCode();
+      const exists = await Class.findOne({ joinCode: newCode });
+      if (!exists) unique = true;
+    }
+
+    foundClass.joinCode = newCode;
+    await foundClass.save();
+
+    res.json({
+      message: "Join code regenerated",
+      joinCode: newCode,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+});
+
+// ============================================
+// DELETE CLASS
+// ============================================
+
+router.delete("/:id", authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
 
     const foundClass = await Class.findById(id);
 
@@ -275,6 +357,7 @@ router.delete("/:id", authenticateToken, async (req, res) => {
 
     const isOwner =
       foundClass.instructor.toString() === req.user._id.toString();
+
     const isAdmin = ["admin", "super_admin"].includes(req.user.role);
 
     if (!isOwner && !isAdmin) {
@@ -286,12 +369,11 @@ router.delete("/:id", authenticateToken, async (req, res) => {
 
     await Class.findByIdAndDelete(id);
 
-    res.status(200).json({
+    res.json({
       message: "Class deleted successfully",
       code: "CLASS_DELETED",
     });
   } catch (err) {
-    console.error("[ERROR] Delete class failed:", err.message);
     res.status(500).json({
       message: "Failed to delete class",
       code: "INTERNAL_SERVER_ERROR",

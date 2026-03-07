@@ -1,3 +1,28 @@
+/* Info row for enrolled class cards */
+.course-card .info-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 18px;
+    margin: 10px 0 0 0;
+    align-items: center;
+}
+
+.course-card .info-row span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #64748b;
+    background: #f1f5f9;
+    border-radius: 8px;
+    padding: 4px 10px;
+}
+
+.course-card .info-row i {
+    color: #2563eb;
+    font-size: 15px;
+}
+
 /* Styles for instructor-profile new components (structure only)
    Minimal, focused on layout and spacing — not colors.
 */

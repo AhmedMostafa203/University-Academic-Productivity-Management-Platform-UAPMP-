@@ -43,7 +43,7 @@
             </div>
           </div>
           <nav class="menu">
-            <a href="student-profile.html" class="menu-item"
+            <a href="#" id="dashboardLink" class="menu-item"
               ><i class="fas fa-th-large"></i> Dashboard</a
             >
             <a href="courses.html" class="menu-item"
@@ -63,12 +63,12 @@
           <div class="user-info">
             <img
               id="notifAvatar"
-              src="https://ui-avatars.com/api/?name=Placeholder&background=random"
+              src="https://ui-avatars.com/api/?name=Loading&background=random"
               alt="User"
             />
             <div>
               <p class="user-name" id="notifName">Loading...</p>
-              <p class="user-id" id="notifId">ID: --</p>
+              <!-- Removed user ID from sidebar -->
             </div>
           </div>
           <i class="fas fa-sign-out-alt logout-btn"></i>
@@ -103,10 +103,8 @@
                 try {
                   const user = JSON.parse(userJson);
                   const name = user.fullName || "";
-                  const id = user.studentId || user.id || "--";
                   // update sidebar
                   document.getElementById("notifName").textContent = name;
-                  document.getElementById("notifId").textContent = `ID: ${id}`;
                   // avatars
                   const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`;
                   document.getElementById("notifAvatar").src = avatarUrl;
@@ -125,8 +123,8 @@
 
         <section class="notif-center">
           <div class="notif-header">
-            <h3>Notifications Center</h3>
-            <p>
+            <h3 id="notifTitle">Notifications Center</h3>
+            <p id="notifDesc">
               Stay updated with announcements from your professors and
               administration
             </p>
@@ -150,6 +148,33 @@
 
     <script src="../config.js"></script>
     <script>
+      // Dashboard link role-based redirect
+      document
+        .getElementById("dashboardLink")
+        .addEventListener("click", function (e) {
+          e.preventDefault();
+          const role = localStorage.getItem("role");
+          if (role === "instructor") {
+            window.location.href = "instructor-profile.html";
+          } else {
+            window.location.href = "student-profile.html";
+          }
+        });
+
+      // Show announcements title/desc based on role automatically
+      const role = localStorage.getItem("role") || "student";
+      if (role === "instructor") {
+        document.getElementById("notifTitle").textContent =
+          "Instructor Announcements";
+        document.getElementById("notifDesc").textContent =
+          "View important announcements for instructors.";
+      } else {
+        document.getElementById("notifTitle").textContent =
+          "Student Announcements";
+        document.getElementById("notifDesc").textContent =
+          "View important announcements for students.";
+      }
+
       // Dark Mode Toggle
       const toggleBtn = document.getElementById("themeToggle");
       if (localStorage.getItem("theme") === "dark") {

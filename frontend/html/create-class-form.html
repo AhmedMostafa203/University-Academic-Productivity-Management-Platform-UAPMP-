@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Add New Class - UAPMP</title>
+    <!-- Tailwind CSS CDN with plugins -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- FontAwesome for Icons -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style data-purpose="custom-animations">
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      .modal-animate-in {
+        animation: fadeIn 0.3s ease-out forwards;
+      }
+      .backdrop-blur-custom {
+        backdrop-filter: blur(8px);
+        background-color: rgba(0, 0, 0, 0.4);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-gray-100 min-h-screen flex items-center justify-center p-4 font-sans"
+  >
+    <!-- BEGIN: Modal Backdrop -->
+    <div
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-custom"
+      data-purpose="modal-overlay"
+      id="modal-container"
+    >
+      <!-- BEGIN: Modal Content Card -->
+      <div
+        aria-labelledby="modal-title"
+        class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden modal-animate-in"
+        data-purpose="add-class-modal"
+        role="dialog"
+      >
+        <!-- Header Section -->
+        <div
+          class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10"
+        >
+          <div>
+            <h2 class="text-2xl font-bold text-gray-800" id="modal-title">
+              Add New Class
+            </h2>
+            <p class="text-sm text-gray-500">
+              Fill out the details to create a new class
+            </p>
+          </div>
+          <button
+            class="text-gray-400 hover:text-gray-600 transition-colors"
+            onclick="handleCancel()"
+          >
+            <i class="fa-solid fa-xmark text-xl"></i>
+          </button>
+        </div>
+        <!-- BEGIN: Permission Warning -->
+        <div
+          class="hidden mx-6 mt-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg flex items-center gap-3"
+          data-purpose="permission-alert"
+          id="permission-warning"
+        >
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <span class="text-sm font-medium"
+            >You do not have permission to add classes.</span
+          >
+        </div>
+        <!-- END: Permission Warning -->
+        <!-- Success/Error message and Join Code inside the form -->
+        <!-- BEGIN: Add Class Form -->
+        <form
+          class="p-6 space-y-5"
+          id="add-class-form"
+          onsubmit="handleFormSubmit(event)"
+        >
+          <!-- Grid Layout for Fields -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <!-- Class Name -->
+            <div class="space-y-1">
+              <label
+                class="block text-sm font-semibold text-gray-700"
+                for="class-name"
+                >Class Name <span class="text-red-500">*</span></label
+              >
+              <div class="relative">
+                <span
+                  class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"
+                >
+                  <i class="fa-solid fa-book"></i>
+                </span>
+                <input
+                  class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition-all text-sm"
+                  id="class-name"
+                  name="className"
+                  placeholder="e.g. Advanced Web Dev"
+                  required
+                  type="text"
+                />
+              </div>
+              <p class="hidden text-xs text-red-500 mt-1" id="error-className">
+                This field is required.
+              </p>
+            </div>
+            <!-- Year -->
+            <div class="space-y-1">
+              <label
+                class="block text-sm font-semibold text-gray-700"
+                for="year"
+                >Year <span class="text-red-500">*</span></label
+              >
+              <div class="relative">
+                <span
+                  class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"
+                >
+                  <i class="fa-solid fa-calendar"></i>
+                </span>
+                <input
+                  class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition-all text-sm"
+                  id="year"
+                  name="year"
+                  placeholder="e.g. 2026"
+                  required
+                  type="number"
+                  min="2020"
+                  max="2100"
+                />
+              </div>
+              <p class="hidden text-xs text-red-500 mt-1" id="error-year">
+                Year is required.
+              </p>
+            </div>
+            <!-- Class Code -->
+            <div class="space-y-1">
+              <label
+                class="block text-sm font-semibold text-gray-700"
+                for="class-code"
+                >Class Code <span class="text-red-500">*</span></label
+              >
+              <div class="relative">
+                <span
+                  class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"
+                >
+                  <i class="fa-solid fa-hashtag"></i>
+                </span>
+                <select
+                  class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition-all text-sm uppercase"
+                  id="class-code"
+                  name="classCode"
+                  required=""
+                >
+                  <!-- Options will be populated by JS -->
+                </select>
+              </div>
+              <p class="hidden text-xs text-red-500 mt-1" id="error-classCode">
+                Unique class code is required.
+              </p>
+            </div>
+            <!-- Department -->
+            <!-- Semester -->
+            <div class="space-y-1">
+              <label
+                class="block text-sm font-semibold text-gray-700"
+                for="semester"
+                >Semester <span class="text-red-500">*</span></label
+              >
+              <div class="relative">
+                <span
+                  class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"
+                >
+                  <i class="fa-solid fa-calendar-days"></i>
+                </span>
+                <select
+                  class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition-all text-sm"
+                  id="semester"
+                  name="semester"
+                  required
+                >
+                  <option disabled selected value="">Select Semester</option>
+                  <option value="Spring">Spring</option>
+                  <option value="Summer">Summer</option>
+                  <option value="Fall">Fall</option>
+                </select>
+              </div>
+              <p class="hidden text-xs text-red-500 mt-1" id="error-semester">
+                Semester is required.
+              </p>
+            </div>
+            <!-- Credit Hours -->
+            <!-- Class Type -->
+          </div>
+          <!-- Description -->
+          <div class="space-y-1">
+            <label
+              class="block text-sm font-semibold text-gray-700"
+              for="description"
+              >Description</label
+            >
+            <div class="relative">
+              <span class="absolute top-2.5 left-3 text-gray-400">
+                <i class="fa-solid fa-align-left"></i>
+              </span>
+              <textarea
+                class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition-all text-sm"
+                id="description"
+                maxlength="500"
+                name="description"
+                placeholder="Provide a brief course overview..."
+                rows="3"
+              ></textarea>
+            </div>
+            <p class="text-[10px] text-gray-400 text-right">
+              Max 500 characters
+            </p>
+          </div>
+          <!-- Toggle Visibility -->
+          <!-- Footer Actions -->
+          <div
+            class="flex flex-col-reverse sm:flex-row justify-end gap-3 mt-8 border-t border-gray-100 pt-6"
+          >
+            <button
+              class="px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 focus:ring-2 focus:ring-gray-300 transition-all"
+              onclick="handleCancel()"
+              type="button"
+            >
+              Cancel
+            </button>
+            <button
+              class="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-300 shadow-md shadow-blue-200 transition-all"
+              id="submit-btn"
+              type="submit"
+            >
+              Add Class
+            </button>
+          </div>
+
+          <!-- Success/Error message inside the form -->
+          <div id="formResponse" class="hidden mt-4 p-3 rounded border-l-4 text-sm"></div>
+
+          <!-- Join Code section inside the form -->
+          <div id="joinCodeSection" class="hidden mt-2 p-3 border border-gray-200 rounded text-gray-700 text-sm">
+            <strong>Join Code:</strong> <span id="joinCodeValue"></span>
+          </div>
+        </form>
+        <!-- END: Add Class Form -->
+      </div>
+      <!-- END: Modal Content Card -->
+    </div>
+    <!-- END: Modal Backdrop -->
+    <script data-purpose="permission-logic">
+      // Course codes (imported from courseCodes.js)
+      let COURSE_CODES = window.COURSE_CODES;
+      if (!COURSE_CODES) {
+        COURSE_CODES = {
+          CS305: "DESIGN AND ANALYSIS ALGORITHMS",
+          CS307: "DATABASE SYSTEMS I",
+          CS302: "COMPUTER ARCHITECTURE",
+          CS303: "SOFTWARE ENGINEERING",
+          CS306: "OPERATING SYSTEMS",
+          CS304: "COMPUTER GRAPHICS",
+        };
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        // Populate Class Code dropdown
+        const classCodeSelect = document.getElementById("class-code");
+        if (classCodeSelect) {
+          classCodeSelect.innerHTML =
+            '<option disabled selected value="">Select Code</option>';
+          Object.entries(COURSE_CODES).forEach(([code, name]) => {
+            classCodeSelect.innerHTML += `<option value="${code}">${code} - ${name}</option>`;
+          });
+        }
+        // Set year input to current year and disable editing
+        var yearInput = document.getElementById("year");
+
+        if (yearInput) {
+          yearInput.value = new Date().getFullYear();
+          yearInput.disabled = true;
+        }
+
+      });
+
+      function showResponse(message, isError) {
+        const container = document.getElementById("formResponse");
+        container.textContent = message;
+        container.className = "mt-4 p-3 rounded border-l-4 text-sm";
+        container.classList.add(isError ? "bg-red-50" : "bg-green-50");
+        container.style.borderColor = isError ? "#f44336" : "#4caf50";
+        container.classList.remove("hidden");
+      }
+
+      function handleFormSubmit(event) {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+        // Basic Validation Check
+        let hasError = false;
+        const requiredFields = ["className", "classCode", "semester"];
+        requiredFields.forEach((field) => {
+          const errorEl = document.getElementById(`error-${field}`);
+          if (
+            !data[field] ||
+            data[field].trim() === "" ||
+            (field === "semester" && data[field] === "Select Semester")
+          ) {
+            if (errorEl) errorEl.classList.remove("hidden");
+            hasError = true;
+          } else {
+            if (errorEl) errorEl.classList.add("hidden");
+          }
+        });
+        if (hasError) return;
+        // Backend integration
+        fetch("http://localhost:5000/api/classes", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + (localStorage.getItem("token") || ""),
+          },
+          body: JSON.stringify({
+            name: data.className,
+            courseCode: data.classCode,
+            semester: data.semester,
+            year: data.year,
+            description: data.description,
+          }),
+        })
+          .then(async (res) => {
+            let result;
+            try {
+              result = await res.json();
+            } catch (e) {
+              result = {};
+            }
+            const joinCodeSection = document.getElementById("joinCodeSection");
+            const joinCodeValue = document.getElementById("joinCodeValue");
+            if (!res.ok) {
+              showResponse(
+                result && result.message
+                  ? result.message
+                  : `Error: ${res.status}`,
+                true
+              );
+              joinCodeSection.classList.add("hidden");
+              return;
+            }
+            if (
+              result &&
+              (result.message === "Class created successfully" || result.class)
+            ) {
+              showResponse("Class successfully created!", false);
+              // Show join code if available
+              if (result.class && result.class.joinCode) {
+                joinCodeValue.textContent = result.class.joinCode;
+                joinCodeSection.classList.remove("hidden");
+              } else {
+                joinCodeSection.classList.add("hidden");
+              }
+              form.reset();
+
+            } else {
+              showResponse(
+                result && result.message
+                  ? result.message
+                  : "Error creating class",
+                true
+              );
+              joinCodeSection.classList.add("hidden");
+            }
+          })
+          .catch((err) => {
+            showResponse(
+              err && err.message
+                ? err.message
+                : "Server error. Please try again later.",
+              true
+            );
+            const joinCodeSection = document.getElementById("joinCodeSection");
+            joinCodeSection.classList.add("hidden");
+          });
+      }
+
+      function handleCancel() {
+        // Logic for closing the modal
+        const modal = document.getElementById("modal-container");
+        modal.style.opacity = "0";
+        modal.style.transition = "opacity 0.2s ease-out";
+        setTimeout(() => {
+          modal.classList.add("hidden");
+          console.log("Modal Closed");
+        }, 200);
+      }
+    </script>
+  </body>
+</html>
