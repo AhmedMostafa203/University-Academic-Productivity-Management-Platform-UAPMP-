@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>UAPMP Student Portal</title>
     <link rel="stylesheet" href="../css/student-profile.css" />
+    <link rel="stylesheet" href="../css/courses.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
@@ -141,28 +142,67 @@
               <a href="courses.html">View all</a>
             </div>
             <div class="classes-grid">
-              <div class="class-card">
-                <div class="card-header blue-bg"><span>CS101</span></div>
-                <div class="card-body">
-                  <h5>Intro to Algorithms</h5>
-                  <p class="prof">Prof. Alan Turing</p>
-                  <p class="time">
-                    <i class="far fa-clock"></i> Mon/Wed • 10:00 AM
-                  </p>
-                  <button class="btn-details">View Details</button>
-                </div>
-              </div>
-              <div class="class-card">
-                <div class="card-header green-bg"><span>MATH202</span></div>
-                <div class="card-body">
-                  <h5>Linear Algebra</h5>
-                  <p class="prof">Prof. Katherine Johnson</p>
-                  <p class="time">
-                    <i class="far fa-clock"></i> Tue/Thu • 2:00 PM
-                  </p>
-                  <button class="btn-details">View Details</button>
-                </div>
-              </div>
+              <script>
+                // Fetch and render instructor's real classes from DB
+                async function loadStudentClasses() {
+                  const token = localStorage.getItem("token");
+                  if (!token) return;
+                  try {
+                    const res = await fetch(
+                      API_CONFIG.BASE_URL + "/api/classes/my",
+                      {
+                        headers: {
+                          Authorization: `Bearer ${token}`,
+                          "Content-Type": "application/json",
+                        },
+                      },
+                    );
+                    const data = await res.json();
+                    const grid = document.querySelector(".classes-grid");
+                    grid.innerHTML = "";
+                    if (!res.ok || !data.classes || data.classes.length === 0) {
+                      grid.innerHTML =
+                        '<div style="color:#888;padding:24px;">No classes</div>';
+                      return;
+                    }
+                    // Color classes for variety
+                    const bgClasses = [
+                      "blue-bg",
+                      "green-bg",
+                      "orange-bg",
+                      "sky-bg",
+                      "pink-bg",
+                      "teal-bg",
+                      "gold-bg",
+                      "magenta-bg",
+                    ];
+                    data.classes.slice(0, 4).forEach((cls, idx) => {
+                      const card = document.createElement("div");
+                      card.className = "course-card";
+                      const bgClass = bgClasses[idx % bgClasses.length];
+                      card.innerHTML = `
+                        <div class="card-header ${bgClass}"><span>${cls.courseCode || "CLASS"}</span></div>
+                        <div class="card-body">
+                          <h5>${cls.name}</h5>
+                          <p class="prof">${cls.instructor && cls.instructor.fullName ? cls.instructor.fullName : ""}</p>
+                          ${cls.description ? `<p class="class-description">${cls.description}</p>` : ""}
+                          <div class="info-row">
+                            <span><i class="fa-solid fa-calendar-days" title="Semester"></i> ${cls.semester || ""} ${cls.year || ""}</span>
+                            <span><i class="fa-solid fa-hashtag" title="Enrolled Students"></i> ${cls.students ? cls.students.length : 0} students</span>
+                            <span><i class="fa-solid fa-key" title="Join Code"></i> ${cls.joinCode || "-"}</span>
+                          </div>
+                          <button class="btn-details">View Details</button>
+                        </div>
+                      `;
+                      grid.appendChild(card);
+                    });
+                  } catch (e) {
+                    document.querySelector(".classes-grid").innerHTML =
+                      `<div style='color:red;padding:24px;'>Error loading classes: ${e.message}</div>`;
+                  }
+                }
+                window.addEventListener("DOMContentLoaded", loadStudentClasses);
+              </script>
             </div>
 
             <div class="recent-grades">

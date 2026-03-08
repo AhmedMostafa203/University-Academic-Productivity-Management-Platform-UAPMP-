@@ -42,12 +42,13 @@
         <div class="sidebar-footer">
           <div class="user-info">
             <img
-              src="https://ui-avatars.com/api/?name=Alex+Chen&background=random"
+              id="sidebarAvatar"
+              src="https://ui-avatars.com/api/?name=User&background=random"
               alt="User"
             />
             <div>
-              <p class="user-name">Alex Chen</p>
-              <p class="user-id">ID: 20240912</p>
+              <p class="user-name" id="sidebarUserName">User Name</p>
+              <p class="user-id" id="sidebarUserId">ID:</p>
             </div>
           </div>
           <i class="fas fa-sign-out-alt logout-btn"></i>
@@ -149,6 +150,37 @@
     </div>
 
     <script>
+      // Fetch and display user info in sidebar footer
+      async function loadSidebarUserInfo() {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+        try {
+          const res = await fetch(API_CONFIG.BASE_URL + "/api/auth/me", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+          if (!res.ok) return;
+          const data = await res.json();
+          if (data && data.user) {
+            document.getElementById("sidebarUserName").textContent =
+              data.user.fullName || "User Name";
+            document.getElementById("sidebarUserId").textContent = data.user
+              .studentId
+              ? `ID: ${data.user.studentId}`
+              : data.user.instructorId
+                ? `ID: ${data.user.instructorId}`
+                : "";
+            document.getElementById("sidebarAvatar").src =
+              `https://ui-avatars.com/api/?name=${encodeURIComponent(data.user.fullName || "User")}&background=random`;
+          }
+        } catch (e) {
+          // Fallback: do nothing
+        }
+      }
+      window.addEventListener("DOMContentLoaded", loadSidebarUserInfo);
+
       // كود تشغيل الدارك مود واللايت مود كما في ملفك الأصلي
       const toggleBtn = document.getElementById("themeToggle");
       if (localStorage.getItem("theme") === "dark") {
