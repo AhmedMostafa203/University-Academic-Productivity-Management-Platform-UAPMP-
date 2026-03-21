@@ -11,6 +11,7 @@ const cors = require("cors");
 const authRoutes = require("./routes/auth");
 const announcementRoutes = require("./routes/announcement");
 const classesRoutes = require("./routes/classes");
+const attendanceRoutes = require("./routes/attendance");
 
 const app = express();
 
@@ -42,6 +43,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/announcements", announcementRoutes);
 // Mount classes routes at /api/classes endpoint
 app.use("/api/classes", classesRoutes);
+// Mount attendance routes at /api/attendance endpoint
+app.use("/api/attendance", attendanceRoutes);
 
 // ============================================
 // DATABASE CONNECTION & SERVER INITIALIZATION
