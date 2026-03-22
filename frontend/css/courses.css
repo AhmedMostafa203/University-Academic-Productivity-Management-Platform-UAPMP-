@@ -1,5 +1,95 @@
-/* Info row for enrolled class cards (copied from instructor-profile.css) */
-.course-card .info-row {
+@import url("logo.css");
+
+/* Only keep unique styles for courses grid and course cards */
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.course-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s;
+  border: 1px solid #e5e7eb;
+}
+
+.course-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.card-header {
+  padding: 18px 24px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.blue-bg {
+  background: #2563eb;
+}
+
+.green-bg {
+  background: #059669;
+}
+
+.orange-bg {
+  background: #f59e42;
+}
+
+.sky-bg {
+  background: #0ea5e9;
+}
+
+.pink-bg {
+  background: #ec4899;
+}
+
+.teal-bg {
+  background: #14b8a6;
+}
+
+.gold-bg {
+  background: #eab308;
+}
+
+.magenta-bg {
+  background: #a21caf;
+}
+
+.card-body {
+  padding: 20px 24px 24px 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card-body h5 {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.prof {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.class-description {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.info-row {
   display: flex;
   flex-wrap: wrap;
   gap: 12px 18px;
@@ -7,7 +97,7 @@
   align-items: center;
 }
 
-.course-card .info-row span {
+.info-row span {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -18,92 +108,27 @@
   padding: 4px 10px;
 }
 
-.course-card .info-row i {
+.info-row i {
   color: #2563eb;
   font-size: 15px;
 }
 
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+.btn-details {
+  margin-top: 14px;
+  padding: 8px 18px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background 0.2s;
 }
 
-body {
-  font-family: "Inter", sans-serif;
-  background-color: #f8fafc;
-  color: #334155;
-  transition: 0.3s;
-}
-
-.container {
-  display: flex;
-  height: 100vh;
-}
-
-
-/* Tablets */
-@media (max-width: 1024px) {
-
-  .sidebar {
-    width: 220px;
-  }
-
-  .main-content {
-    padding: 25px;
-  }
-
-  .search-bar input {
-    width: 180px;
-  }
-
-  .courses-grid {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  }
-
-}
-
-
-/* Mobile */
-@media (max-width: 768px) {
-
-  .container {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    width: 100%;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px;
-  }
-
-  .menu {
-    display: none;
-  }
-
-  .main-content {
-    padding: 20px;
-  }
-
-  .header {
-    flex-direction: column;
-    gap: 15px;
-    align-items: flex-start;
-  }
-
-  .header-right {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .search-bar input {
-    width: 140px;
-  }
-
+.btn-details:hover {
+  background: #1e40af;
 }
 
 
@@ -149,7 +174,7 @@ body {
   animation: fadeInUp 0.5s ease;
 }
 
-.logo {
+/* .logo {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -171,7 +196,7 @@ body {
 .logo-text span {
   font-size: 11px;
   color: #94a3b8;
-}
+} */
 
 .menu {
   display: flex;

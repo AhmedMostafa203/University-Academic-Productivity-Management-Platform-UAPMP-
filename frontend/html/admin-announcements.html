@@ -5,6 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Announcements Management - UniPlatform</title>
 
+    <script>
+      // Admin authentication guard (prevents access unless admin/super_admin)
+      (function adminGuard() {
+        const token = localStorage.getItem("token");
+        const userJson = localStorage.getItem("user");
+        if (!token || !userJson) {
+          window.location.href = "signin.html";
+          return;
+        }
+        try {
+          const user = JSON.parse(userJson);
+          if (user.role !== "admin" && user.role !== "super_admin") {
+            window.location.href = "signin.html";
+            return;
+          }
+        } catch {
+          window.location.href = "signin.html";
+        }
+      })();
+    </script>
+
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
@@ -172,16 +193,6 @@
       }
       .icon-btn:hover {
         color: var(--text-main);
-      }
-      .avatar {
-        width: 32px;
-        height: 32px;
-        background-color: #fcd34d;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #111827;
       }
 
       /* Main Container */
@@ -642,7 +653,6 @@
         >
           <i class="fa-regular fa-moon" id="themeIcon"></i>
         </button>
-        <div class="avatar"><i class="fa-solid fa-user-tie"></i></div>
       </div>
     </nav>
 
@@ -869,6 +879,25 @@
     <!-- JavaScript Logic -->
     <script src="../config.js"></script>
     <script>
+      // Dark mode toggle logic
+      const themeToggleBtn = document.getElementById("themeToggleBtn");
+      const themeIcon = document.getElementById("themeIcon");
+      function setDarkMode(enabled) {
+        document.body.classList.toggle("dark-mode", enabled);
+        themeIcon.className = enabled
+          ? "fa-regular fa-sun"
+          : "fa-regular fa-moon";
+      }
+      // Optionally persist theme in localStorage
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme === "dark") setDarkMode(true);
+      themeToggleBtn.addEventListener("click", () => {
+        const isDark = document.body.classList.toggle("dark-mode");
+        themeIcon.className = isDark
+          ? "fa-regular fa-sun"
+          : "fa-regular fa-moon";
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+      });
       // Auth check: Only allow admin/super_admin
       (function guard() {
         const token = localStorage.getItem("token");

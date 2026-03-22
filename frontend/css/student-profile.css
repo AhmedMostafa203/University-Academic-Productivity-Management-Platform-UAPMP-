@@ -1,5 +1,6 @@
 /* Core Typography & Colors */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import url("logo.css");
 
 * {
     margin: 0;
@@ -43,31 +44,6 @@ body {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 40px;
-}
-
-.logo-icon {
-    color: #2563eb;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-}
-
-.logo-icon svg {
-    width: 100%;
-    height: 100%;
-}
-
-.logo-text span {
-    font-size: 11px;
-    color: #94a3b8;
-}
 
 .menu {
     display: flex;

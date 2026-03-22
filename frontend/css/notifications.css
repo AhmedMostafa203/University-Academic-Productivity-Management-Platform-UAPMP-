@@ -1,50 +1,7 @@
-/* Ensure logo scales and colors match student-profile */
 @import url("student-profile.css");
+@import url("logo.css");
 
-/* .logo-icon {
-    color: #2563eb;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-}
-
-.logo-svg {
-    width: 100%;
-    height: 100%;
-}
-
-body.dark-mode .logo-icon {
-    color: #60a5fa;
-} */
-
-@import url("student-profile.css");
-
-.attachment-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: #f3f4f6;
-    color: #2563eb;
-    font-weight: 600;
-    font-size: 14px;
-    padding: 6px 14px;
-    border-radius: 6px;
-    text-decoration: none;
-    transition: background 0.2s, color 0.2s;
-}
-
-.attachment-link:hover {
-    background: #dbeafe;
-    color: #1e40af;
-}
-
-.attachment-link i {
-    font-size: 15px;
-}
-
-/* Notification card styles */
+/* Only keep unique styles for notification cards and notification-specific elements */
 .notif-list {
     display: flex;
     flex-direction: column;
@@ -125,79 +82,29 @@ body.dark-mode .logo-icon {
     margin-bottom: 8px;
 }
 
-/* Dark mode styles for notifications */
-body.dark-mode {
-    background-color: #0f172a;
-    color: #f8fafc;
+.attachment-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f3f4f6;
+    color: #2563eb;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
 }
 
-.sidebar.dark-mode,
-body.dark-mode .sidebar {
-    background: #1e293b;
-    border-right: 1px solid #334155;
+.attachment-link:hover {
+    background: #dbeafe;
+    color: #1e40af;
 }
 
-.logo-text.dark-mode,
-body.dark-mode .logo-text {
-    color: #f8fafc;
+.attachment-link i {
+    font-size: 15px;
 }
 
-.menu-item.dark-mode,
-body.dark-mode .menu-item {
-    color: #94a3b8;
-}
-
-.menu-item.active.dark-mode,
-body.dark-mode .menu-item.active {
-    background: #334155;
-    color: #3b82f6;
-}
-
-.menu-item:hover.dark-mode,
-body.dark-mode .menu-item:hover:not(.active),
-body.dark-mode .menu-item:hover:not(.active) {
-    background: #334155;
-}
-
-.sidebar-footer.dark-mode,
-body.dark-mode .sidebar-footer {
-    background: #1e293b;
-}
-
-.user-info.dark-mode,
-body.dark-mode .user-info {
-    color: #f8fafc;
-}
-
-.main-content.dark-mode,
-body.dark-mode .main-content {
-    background: #0f172a;
-    color: #f8fafc;
-}
-
-.notif-card.dark-mode,
-body.dark-mode .notif-card {
-    background: #1e293b;
-    color: #f8fafc;
-    border-color: #334155;
-}
-
-.notif-header.dark-mode,
-body.dark-mode .notif-header {
-    color: #f8fafc;
-}
-
-.notif-link.dark-mode,
-body.dark-mode .notif-link a {
-    color: #60a5fa;
-}
-
-.notif-link a.dark-mode:hover,
-body.dark-mode .notif-link a:hover {
-    color: #3b82f6;
-}
-
-.notif-meta.dark-mode,
 body.dark-mode .notif-meta {
     color: #94a3b8;
 }
