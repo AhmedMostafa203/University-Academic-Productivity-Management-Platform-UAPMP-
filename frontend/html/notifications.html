@@ -153,19 +153,25 @@
         });
 
       // Show announcements title/desc based on role automatically
-      const role = localStorage.getItem("role") || "student";
-      if (role === "instructor") {
-        document.getElementById("notifTitle").textContent =
-          "Instructor Announcements";
-        document.getElementById("notifDesc").textContent =
-          "View important announcements for instructors.";
-      } else {
-        document.getElementById("notifTitle").textContent =
-          "Student Announcements";
-        document.getElementById("notifDesc").textContent =
-          "View important announcements for students.";
-      }
+      (function setNotifHeader() {
+        let role = "student";
+        try {
+          const user = JSON.parse(localStorage.getItem("user") || "{}");
+          role = user.role || "student";
+        } catch (_) {}
 
+        if (role === "instructor") {
+          document.getElementById("notifTitle").textContent =
+            "Instructor Announcements";
+          document.getElementById("notifDesc").textContent =
+            "View important announcements for instructors.";
+        } else {
+          document.getElementById("notifTitle").textContent =
+            "Student Announcements";
+          document.getElementById("notifDesc").textContent =
+            "View important announcements for students.";
+        }
+      })();
       // Dark Mode Toggle
       const toggleBtn = document.getElementById("themeToggle");
       if (localStorage.getItem("theme") === "dark") {
