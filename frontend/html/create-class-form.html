@@ -354,7 +354,7 @@
             form.reset();
             document.getElementById("year").value = new Date().getFullYear();
             // Auto-redirect countdown
-            startCountdown(4, "admin-profile.html");
+            startCountdown(1, "admin-profile.html");
           } else {
             showResponse(result.message || `Failed to create class. [${res.status}]`, true);
             document.getElementById("joinCodeBox").classList.remove("visible");

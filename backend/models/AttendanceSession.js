@@ -43,14 +43,28 @@ const AttendanceSessionSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
-    exported: {
-      type: Boolean,
-      default: false,
-    },
     totalStudents: {
       type: Number,
       default: 0,
     },
+    students: [
+      {
+        studentId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        studentName: {
+          type: String,
+          required: true,
+        },
+        timestamp: {
+          type: Date,
+          default: Date.now,
+          required: true,
+        },
+      },
+    ],
   },
   {
     timestamps: true,

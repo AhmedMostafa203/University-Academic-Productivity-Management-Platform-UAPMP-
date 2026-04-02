@@ -2,7 +2,6 @@
 // Attendance System controller logic
 
 const AttendanceSession = require("../models/AttendanceSession");
-const Attendance = require("../models/Attendance");
 
 const { generateAttendanceExcel } = require("../utils/excelExport");
 const fs = require("fs");
@@ -42,7 +41,6 @@ exports.createSession = async (req, res) => {
       },
       totalStudents: 0,
       isActive: true,
-      exported: false,
     });
     await session.save();
     // Schedule auto end of session
@@ -63,7 +61,7 @@ exports.createSession = async (req, res) => {
           await freshSession.save();
           await handleSessionEnd(freshSession._id, freshSession.instructorId);
           console.log(
-            `[autoEndSession] Session ${freshSession._id} auto-ended and exported. isActive: ${freshSession.isActive}`,
+            `[autoEndSession] Session ${freshSession._id} auto-ended. isActive: ${freshSession.isActive}`,
           );
         } else {
           console.log(
@@ -122,27 +120,30 @@ exports.checkIn = async (req, res) => {
       });
     }
     // Prevent duplicate check-in
-    const existing = await Attendance.findOne({
-      sessionId,
-      studentId: req.user._id,
-    });
-    if (existing) {
+    const alreadyCheckedIn =
+      session.students &&
+      session.students.some(
+        (s) => s.studentId.toString() === req.user._id.toString(),
+      );
+    if (alreadyCheckedIn) {
       return res.status(400).json({ message: "You have already checked in." });
     }
-    // Save attendance
-    const attendance = new Attendance({
-      sessionId,
+    // Add student to session's students array
+    session.students.push({
       studentId: req.user._id,
-      studentName: req.user.fullName, // Use fullName from User schema
+      studentName: req.user.fullName,
       timestamp: now,
     });
-    await attendance.save();
-    // Increment totalStudents
-    session.totalStudents += 1;
+    session.totalStudents = session.students.length;
     await session.save();
-    return res
-      .status(201)
-      .json({ message: "Check-in successful.", attendance });
+    return res.status(201).json({
+      message: "Check-in successful.",
+      student: {
+        studentId: req.user._id,
+        studentName: req.user.fullName,
+        timestamp: now,
+      },
+    });
   } catch (err) {
     console.error("[checkIn]", err);
     res.status(500).json({ message: "Failed to check in." });
@@ -166,7 +167,7 @@ exports.endSession = async (req, res) => {
     }
     session.isActive = false;
     await session.save();
-    // Generate Excel and mark as exported
+    // Generate Excel
     await handleSessionEnd(sessionId, session.instructorId);
     return res
       .status(200)
@@ -187,11 +188,10 @@ const User = require("../models/User");
 const Class = require("../models/Class");
 
 async function handleSessionEnd(sessionId, instructorId) {
-  // Get all attendance records for the session
-  const attendanceList = await Attendance.find({ sessionId });
-  // Get class name for file naming
+  // Get session and students array
   const session = await AttendanceSession.findById(sessionId);
-  console.log("[handleSessionEnd] session.classId:", session?.classId); // is it populated?
+  if (!session) return;
+  // Get class name for file naming
   let className = "Class";
   if (session && session.classId) {
     // Force classId to string to avoid ObjectId type mismatch
@@ -203,14 +203,14 @@ async function handleSessionEnd(sessionId, instructorId) {
   let fileBaseName = "Class Attendance";
   // Prepare data: only Name, Student ID (real), Timestamp
   const exportData = [];
-  for (const a of attendanceList) {
+  for (const s of session.students || []) {
     let realStudentId = "";
-    const user = await User.findById(a.studentId);
+    const user = await User.findById(s.studentId);
     if (user && user.studentId) realStudentId = user.studentId; // Get real student ID from User schema
     exportData.push({
-      studentName: a.studentName,
+      studentName: s.studentName,
       studentId: realStudentId,
-      timestamp: a.timestamp,
+      timestamp: s.timestamp,
     });
   }
   // Generate Excel file buffer
@@ -220,8 +220,6 @@ async function handleSessionEnd(sessionId, instructorId) {
   if (!fs.existsSync(exportDir)) fs.mkdirSync(exportDir);
   const filePath = path.join(exportDir, `${fileBaseName}.xlsx`);
   fs.writeFileSync(filePath, buffer);
-  // Mark session as exported
-  await AttendanceSession.findByIdAndUpdate(sessionId, { exported: true });
 
   // Send Excel file to instructor via email (dev/test only)
   try {

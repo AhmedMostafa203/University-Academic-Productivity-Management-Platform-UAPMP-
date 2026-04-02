@@ -93,7 +93,12 @@
               />
             </div>
             <div class="header-icons">
-              <a href="#" class="icon-wrapper" data-tooltip="Join Class">
+              <a
+                href="javascript:void(0)"
+                class="icon-wrapper"
+                data-tooltip="Join Class"
+                onclick="toggleJoinModal()"
+              >
                 <i class="fas fa-plus-circle join-icon"></i>
               </a>
               <i
@@ -323,6 +328,76 @@
     </script>
     <script src="../config.js"></script>
     <script>
+      // Join Class functionality using getElementById
+      document.addEventListener("DOMContentLoaded", function () {
+        const joinBtn = document.getElementById("joinClassBtn");
+        const input = document.getElementById("joinClassInput");
+        const responseBox = document.getElementById("joinClassResponse");
+        if (joinBtn && input && responseBox) {
+          joinBtn.addEventListener("click", async function (e) {
+            e.preventDefault();
+            responseBox.textContent = "";
+            const code = input.value.trim();
+            if (!code) {
+              responseBox.style.color = "#d32f2f";
+              responseBox.textContent =
+                "Please enter a class ID or access code.";
+              return;
+            }
+            const API_URL =
+              window.API_CONFIG && window.API_CONFIG.BASE_URL
+                ? window.API_CONFIG.BASE_URL
+                : "http://localhost:5000";
+            const token = localStorage.getItem("token");
+            if (!token) {
+              responseBox.style.color = "#d32f2f";
+              responseBox.textContent = "You must be logged in.";
+              return;
+            }
+            joinBtn.disabled = true;
+            joinBtn.innerHTML =
+              '<span style="font-size:16px"><i class="fas fa-spinner fa-spin"></i></span> Joining...';
+            try {
+              const res = await fetch(`${API_URL}/api/classes/join`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ joinCode: code }),
+              });
+              let result = {};
+              try {
+                result = await res.json();
+              } catch (_) {}
+              joinBtn.disabled = false;
+              joinBtn.innerHTML =
+                '<span>Join Class Now</span> <i class="fas fa-arrow-right"></i>';
+              if (res.ok) {
+                responseBox.style.color = "#388e3c";
+                responseBox.textContent = "Successfully joined the class!";
+                setTimeout(() => {
+                  document.getElementById("joinModal").style.display = "none";
+                  responseBox.textContent = "";
+                  window.location.reload();
+                }, 1200);
+              } else {
+                responseBox.style.color = "#d32f2f";
+                responseBox.textContent =
+                  result.message || `Failed to join class. [${res.status}]`;
+              }
+            } catch (err) {
+              joinBtn.disabled = false;
+              joinBtn.innerHTML =
+                '<span>Join Class Now</span> <i class="fas fa-arrow-right"></i>';
+              responseBox.style.color = "#d32f2f";
+              responseBox.textContent = "Network error. Please try again.";
+            }
+          });
+        }
+      });
+    </script>
+    <script>
       // Accept token/user from URL (after email verification) and store
       (function handleUrlLogin() {
         try {
@@ -446,5 +521,78 @@
         window.location.href = "signin.html";
       });
     </script>
+    <script>
+      function toggleJoinModal() {
+        const modal = document.getElementById("joinModal");
+        if (modal.style.display === "none" || modal.style.display === "") {
+          modal.style.display = "flex"; // إظهار النافذة
+        } else {
+          modal.style.display = "none"; // إخفاء النافذة
+        }
+      }
+
+      // قفل النافذة لو دوست بره الكارت الأبيض
+      window.onclick = function (event) {
+        const modal = document.getElementById("joinModal");
+        if (event.target == modal) {
+          toggleJoinModal();
+        }
+      };
+
+      function toggleJoinModal() {
+        const modal = document.getElementById("joinModal");
+        const inputField = modal.querySelector(".material-input"); // بنجيب مكان الكتابة
+
+        if (modal.style.display === "none" || modal.style.display === "") {
+          // أول ما نفتح النافذة.. نمسح أي كلام قديم
+          if (inputField) inputField.value = "";
+
+          modal.style.display = "flex";
+        } else {
+          modal.style.display = "none";
+        }
+      }
+    </script>
+    <div id="joinModal" class="modal-window-overlay" style="display: none">
+      <div class="modal-card">
+        <button onclick="toggleJoinModal()" class="material-close-btn">
+          &times;
+        </button>
+
+        <div class="modal-card-content">
+          <div class="material-icon-container">
+            <i class="fas fa-plus-square"></i>
+          </div>
+
+          <h2 class="material-title">Join Class</h2>
+          <p class="material-subtitle">
+            Enter your class ID or access code to join
+          </p>
+
+          <div class="material-input-group">
+            <label>Class Identification</label>
+            <input
+              type="text"
+              placeholder="Enter Class ID (e.g. BB6410)"
+              class="material-input"
+              id="joinClassInput"
+            />
+          </div>
+
+          <button class="material-join-btn" id="joinClassBtn">
+            <span>Join Class Now</span> <i class="fas fa-arrow-right"></i>
+          </button>
+          <div
+            id="joinClassResponse"
+            style="margin-top: 10px; font-size: 14px"
+          ></div>
+
+
+          <p class="material-footer-text">
+            Having trouble? Contact your Instructor for the course access code.
+          </p>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
