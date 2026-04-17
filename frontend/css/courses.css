@@ -117,7 +117,6 @@
   margin-top: 14px;
   padding: 8px 18px;
   background: #2563eb;
-  color: #fff;
   border: none;
   border-radius: 8px;
   font-weight: 600;
@@ -127,8 +126,16 @@
   transition: background 0.2s;
 }
 
-.btn-details:hover {
-  background: #1e40af;
+.btn-details a {
+  text-decoration: none;
+  color: #65758c;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.btn-details:hover a {
+  color: #fff;
 }
 
 
@@ -374,6 +381,15 @@ img:hover {
   border: 1px solid #e2e8f0;
   transition: 0.3s;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .course-card:hover {
@@ -385,6 +401,31 @@ img:hover {
 .card-header {
   height: 90px;
   padding: 20px;
+}
+
+/* Info row for enrolled class cards */
+.course-card .info-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  margin: 10px 0 0 0;
+  align-items: center;
+}
+
+.course-card .info-row span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #64748b;
+  background: #f1f5f9;
+  border-radius: 8px;
+  padding: 4px 10px;
+}
+
+.course-card .info-row i {
+  color: #2563eb;
+  font-size: 15px;
 }
 
 /* الألوان المتدرجة للكورسات (Gradients) من الصورة */
@@ -455,7 +496,7 @@ img:hover {
 
 .btn-details {
   width: 100%;
-  margin-top: 15px;
+  /* margin-top: 15px; */
   padding: 10px;
   border: none;
   background: #f8fafc;
@@ -464,6 +505,7 @@ img:hover {
   font-weight: 600;
   cursor: pointer;
   transition: 0.3s;
+  margin-top: auto;
 }
 
 .btn-details:hover {

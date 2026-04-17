@@ -400,6 +400,15 @@
           </div>
         </header>
         <script>
+          // Open class and store selectedClass in localStorage
+          function openClass(classObj) {
+            if (!classObj) {
+              alert("Class data missing!");
+              return;
+            }
+            localStorage.setItem("selectedClass", JSON.stringify(classObj));
+            window.location.href = "class.html";
+          }
           // Form submission handler for Add Class
           document.getElementById("add-class-form").onsubmit = function (
             event,
@@ -611,9 +620,16 @@
                             <span><i class="fa-solid fa-hashtag" title="Enrolled Students"></i> ${cls.students ? cls.students.length : 0} students</span>
                             <span><i class="fa-solid fa-key" title="Join Code"></i> ${cls.joinCode || "-"}</span>
                           </div>
-                          <button class="btn-details">View Details</button>
+                          <button class="btn-details" type="button">View Details</button>
                         </div>
                       `;
+                      // Attach click handler to button
+                      const btn = card.querySelector(".btn-details");
+                      if (btn) {
+                        btn.addEventListener("click", function () {
+                          openClass(cls);
+                        });
+                      }
                       grid.appendChild(card);
                     });
                   } catch (e) {

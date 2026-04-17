@@ -55,13 +55,11 @@ router.post("/", authenticateToken, async (req, res) => {
     res.status(201).json({ announcement });
   } catch (err) {
     console.error("[ERROR] Failed to create announcement:", err);
-    res
-      .status(500)
-      .json({
-        message: "Failed to create announcement",
-        error: err.message,
-        stack: err.stack,
-      });
+    res.status(500).json({
+      message: "Failed to create announcement",
+      error: err.message,
+      stack: err.stack,
+    });
   }
 });
 

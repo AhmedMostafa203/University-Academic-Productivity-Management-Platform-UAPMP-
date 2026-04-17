@@ -34,12 +34,6 @@
             <div class="logo-text">
               <h1>UAPMP</h1>
               <span>Student Portal</span>
-              <script>
-                document.getElementById("announcementsBell").onclick =
-                  function () {
-                    window.location.href = "notifications.html";
-                  };
-              </script>
             </div>
           </div>
 
@@ -146,69 +140,7 @@
               <h4>Enrolled Classes</h4>
               <a href="courses.html">View all</a>
             </div>
-            <div class="classes-grid">
-              <script>
-                // Fetch and render instructor's real classes from DB
-                async function loadStudentClasses() {
-                  const token = localStorage.getItem("token");
-                  if (!token) return;
-                  try {
-                    const res = await fetch(
-                      API_CONFIG.BASE_URL + "/api/classes/my",
-                      {
-                        headers: {
-                          Authorization: `Bearer ${token}`,
-                          "Content-Type": "application/json",
-                        },
-                      },
-                    );
-                    const data = await res.json();
-                    const grid = document.querySelector(".classes-grid");
-                    grid.innerHTML = "";
-                    if (!res.ok || !data.classes || data.classes.length === 0) {
-                      grid.innerHTML =
-                        '<div style="color:#888;padding:24px;">No classes</div>';
-                      return;
-                    }
-                    // Color classes for variety
-                    const bgClasses = [
-                      "blue-bg",
-                      "green-bg",
-                      "orange-bg",
-                      "sky-bg",
-                      "pink-bg",
-                      "teal-bg",
-                      "gold-bg",
-                      "magenta-bg",
-                    ];
-                    data.classes.slice(0, 4).forEach((cls, idx) => {
-                      const card = document.createElement("div");
-                      card.className = "course-card";
-                      const bgClass = bgClasses[idx % bgClasses.length];
-                      card.innerHTML = `
-                        <div class="card-header ${bgClass}"><span>${cls.courseCode || "CLASS"}</span></div>
-                        <div class="card-body">
-                          <h5>${cls.name}</h5>
-                          <p class="prof">${cls.instructor && cls.instructor.fullName ? cls.instructor.fullName : ""}</p>
-                          ${cls.description ? `<p class="class-description">${cls.description}</p>` : ""}
-                          <div class="info-row">
-                            <span><i class="fa-solid fa-calendar-days" title="Semester"></i> ${cls.semester || ""} ${cls.year || ""}</span>
-                            <span><i class="fa-solid fa-hashtag" title="Enrolled Students"></i> ${cls.students ? cls.students.length : 0} students</span>
-                            <span><i class="fa-solid fa-key" title="Join Code"></i> ${cls.joinCode || "-"}</span>
-                          </div>
-                          <button class="btn-details">View Details</button>
-                        </div>
-                      `;
-                      grid.appendChild(card);
-                    });
-                  } catch (e) {
-                    document.querySelector(".classes-grid").innerHTML =
-                      `<div style='color:red;padding:24px;'>Error loading classes: ${e.message}</div>`;
-                  }
-                }
-                window.addEventListener("DOMContentLoaded", loadStudentClasses);
-              </script>
-            </div>
+            <div class="classes-grid"></div>
 
             <div class="recent-grades">
               <div class="section-header">
@@ -301,20 +233,20 @@
       </main>
     </div>
 
+    <!-- ─── Scripts ──────────────────────────────────────────────── -->
+
+    <!-- Dark mode toggle -->
     <script>
       const toggleBtn = document.getElementById("themeToggle");
 
-      // لو المستخدم مختار دارك قبل كده
       if (localStorage.getItem("theme") === "dark") {
         document.body.classList.add("dark-mode");
         toggleBtn.classList.remove("fa-moon");
         toggleBtn.classList.add("fa-sun");
       }
 
-      // عند الضغط
       toggleBtn.addEventListener("click", () => {
         document.body.classList.toggle("dark-mode");
-
         if (document.body.classList.contains("dark-mode")) {
           localStorage.setItem("theme", "dark");
           toggleBtn.classList.remove("fa-moon");
@@ -326,37 +258,130 @@
         }
       });
     </script>
+
     <script src="../config.js"></script>
+
+    <!-- Load student classes -->
     <script>
-      // Join Class functionality using getElementById
+      /**
+       * Fetches the student's enrolled classes and renders them.
+       *
+       * KEY CHANGE: the "View Details" button now calls goToClass(cls)
+       * which saves the full class object to localStorage("selectedClass")
+       * BEFORE navigating — so class.html can read it immediately.
+       */
+      async function loadStudentClasses() {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        try {
+          const res = await fetch(API_CONFIG.BASE_URL + "/api/classes/my", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+
+          const data = await res.json();
+          const grid = document.querySelector(".classes-grid");
+          grid.innerHTML = "";
+
+          if (!res.ok || !data.classes || data.classes.length === 0) {
+            grid.innerHTML =
+              '<div style="color:#888;padding:24px;">No classes</div>';
+            return;
+          }
+
+          const bgClasses = [
+            "blue-bg", "green-bg", "orange-bg", "sky-bg",
+            "pink-bg",  "teal-bg",  "gold-bg",   "magenta-bg",
+          ];
+
+          data.classes.slice(0, 4).forEach((cls, idx) => {
+            const card = document.createElement("div");
+            card.className = "course-card";
+            const bgClass = bgClasses[idx % bgClasses.length];
+
+            card.innerHTML = `
+              <div class="card-header ${bgClass}">
+                <span>${cls.courseCode || "CLASS"}</span>
+              </div>
+              <div class="card-body">
+                <h5>${cls.name}</h5>
+                <p class="prof">${cls.instructor?.fullName ?? ""}</p>
+                ${cls.description ? `<p class="class-description">${cls.description}</p>` : ""}
+                <div class="info-row">
+                  <span><i class="fa-solid fa-calendar-days" title="Semester"></i> ${cls.semester || ""} ${cls.year || ""}</span>
+                  <span><i class="fa-solid fa-hashtag" title="Enrolled Students"></i> ${cls.students?.length ?? 0} students</span>
+                  <span><i class="fa-solid fa-key" title="Join Code"></i> ${cls.joinCode || "-"}</span>
+                </div>
+                <!-- ✅ onclick saves class to localStorage then navigates -->
+                <button class="btn-details" onclick="goToClass(${idx})">
+                  View Details
+                </button>
+              </div>
+            `;
+
+            // Store the class object on the card element so goToClass can find it
+            card.__classData = cls;
+            grid.appendChild(card);
+          });
+
+        } catch (e) {
+          document.querySelector(".classes-grid").innerHTML =
+            `<div style='color:red;padding:24px;'>Error loading classes: ${e.message}</div>`;
+        }
+      }
+
+      /**
+       * Saves the selected class to localStorage then navigates to class.html.
+       * @param {number} idx — index of the card in .classes-grid
+       */
+      function goToClass(idx) {
+        const cards = document.querySelectorAll(".classes-grid .course-card");
+        const cls = cards[idx]?.__classData;
+        if (cls) {
+          localStorage.setItem("selectedClass", JSON.stringify(cls));
+        }
+        window.location.href = "class.html";
+      }
+
+      window.addEventListener("DOMContentLoaded", loadStudentClasses);
+    </script>
+
+    <!-- Join Class modal -->
+    <script>
       document.addEventListener("DOMContentLoaded", function () {
-        const joinBtn = document.getElementById("joinClassBtn");
-        const input = document.getElementById("joinClassInput");
+        const joinBtn     = document.getElementById("joinClassBtn");
+        const input       = document.getElementById("joinClassInput");
         const responseBox = document.getElementById("joinClassResponse");
+
         if (joinBtn && input && responseBox) {
           joinBtn.addEventListener("click", async function (e) {
             e.preventDefault();
             responseBox.textContent = "";
             const code = input.value.trim();
+
             if (!code) {
               responseBox.style.color = "#d32f2f";
-              responseBox.textContent =
-                "Please enter a class ID or access code.";
+              responseBox.textContent = "Please enter a class ID or access code.";
               return;
             }
+
             const API_URL =
-              window.API_CONFIG && window.API_CONFIG.BASE_URL
-                ? window.API_CONFIG.BASE_URL
-                : "http://localhost:5000";
+              window.API_CONFIG?.BASE_URL ?? "http://localhost:5000";
             const token = localStorage.getItem("token");
+
             if (!token) {
               responseBox.style.color = "#d32f2f";
               responseBox.textContent = "You must be logged in.";
               return;
             }
+
             joinBtn.disabled = true;
             joinBtn.innerHTML =
               '<span style="font-size:16px"><i class="fas fa-spinner fa-spin"></i></span> Joining...';
+
             try {
               const res = await fetch(`${API_URL}/api/classes/join`, {
                 method: "POST",
@@ -366,13 +391,14 @@
                 },
                 body: JSON.stringify({ joinCode: code }),
               });
+
               let result = {};
-              try {
-                result = await res.json();
-              } catch (_) {}
+              try { result = await res.json(); } catch (_) {}
+
               joinBtn.disabled = false;
               joinBtn.innerHTML =
                 '<span>Join Class Now</span> <i class="fas fa-arrow-right"></i>';
+
               if (res.ok) {
                 responseBox.style.color = "#388e3c";
                 responseBox.textContent = "Successfully joined the class!";
@@ -397,49 +423,45 @@
         }
       });
     </script>
+
+    <!-- Auth guard + user populate -->
     <script>
-      // Accept token/user from URL (after email verification) and store
+      // Accept token/user from URL (after email verification)
       (function handleUrlLogin() {
         try {
-          const params = new URLSearchParams(window.location.search);
-          const token = params.get("token");
+          const params      = new URLSearchParams(window.location.search);
+          const token       = params.get("token");
           const userEncoded = params.get("user");
           if (token && userEncoded) {
             try {
               const decoded = decodeURIComponent(userEncoded);
-              const userJson = atob(decoded);
-              const user = JSON.parse(userJson);
+              const user    = JSON.parse(atob(decoded));
               localStorage.setItem("token", token);
               localStorage.setItem("user", JSON.stringify(user));
-              history.replaceState(
-                {},
-                document.title,
-                window.location.pathname,
-              );
+              history.replaceState({}, document.title, window.location.pathname);
             } catch (e) {
-              console.warn("failed parse user from url", e.message);
+              console.warn("failed to parse user from url", e.message);
             }
           }
         } catch (e) {}
       })();
 
-      // ensure user is logged in and has student role
+      // Guard: must be logged-in student
       (function guard() {
-        const token = localStorage.getItem("token");
+        const token   = localStorage.getItem("token");
         const userJson = localStorage.getItem("user");
+
         if (!token || !userJson) {
-          // not authenticated
           window.location.href = "signin.html";
           return;
         }
+
         try {
           const user = JSON.parse(userJson);
+
           if (user.role !== "student") {
-            // wrong dashboard
             window.location.href =
-              user.role === "instructor"
-                ? "instructor-profile.html"
-                : "signin.html";
+              user.role === "instructor" ? "instructor-profile.html" : "signin.html";
             return;
           }
 
@@ -452,22 +474,19 @@
             },
           })
             .then((res) => {
-              if (!res.ok) {
-                throw new Error("Token verification failed");
-              }
+              if (!res.ok) throw new Error("Token verification failed");
               return res.json();
             })
             .then((data) => {
-              // Token is valid, update localStorage with fresh user data
               localStorage.setItem("user", JSON.stringify(data.user));
             })
             .catch((err) => {
               console.warn("Token verification failed:", err.message);
-              // Token is invalid/expired, clear and redirect to login
               localStorage.removeItem("token");
               localStorage.removeItem("user");
               window.location.href = "signin.html";
             });
+
         } catch {
           localStorage.removeItem("token");
           localStorage.removeItem("user");
@@ -475,100 +494,74 @@
         }
       })();
 
-      // populate dynamic user data after guard
+      // Populate dynamic user data
       (function populateUser() {
         const userJson = localStorage.getItem("user");
         if (!userJson) return;
         try {
-          const user = JSON.parse(userJson);
-          const name = user.fullName || "";
-          const id = user.studentId || user.id || "--";
-          const faculty = user.college || "";
+          const user       = JSON.parse(userJson);
+          const name       = user.fullName || "";
+          const id         = user.studentId || user.id || "--";
+          const faculty    = user.college   || "";
           const university = user.university || "";
-          // update sidebar
-          document.getElementById("sidebarName").textContent = name;
-          document.getElementById("sidebarId").textContent = `ID: ${id}`;
-          // avatars
-          const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-            name,
-          )}&background=random`;
-          document.getElementById("avatarImg").src = avatarUrl;
-          document.getElementById("topAvatar").src = avatarUrl.replace(
-            "background=random",
-            "background=E5B79B",
-          );
-          document.getElementById("bannerImg").src = avatarUrl.replace(
-            "background=random",
-            "background=E5B79B",
-          );
 
-          // welcome banner text
+          document.getElementById("sidebarName").textContent = name;
+          document.getElementById("sidebarId").textContent   = `ID: ${id}`;
+
+          const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`;
+          document.getElementById("avatarImg").src  = avatarUrl;
+          document.getElementById("topAvatar").src  = avatarUrl.replace("background=random", "background=E5B79B");
+          document.getElementById("bannerImg").src  = avatarUrl.replace("background=random", "background=E5B79B");
+
           document.getElementById("welcomeName").textContent = name;
           document.getElementById("facultyText").textContent =
-            faculty && university
-              ? `${faculty} • ${university}`
-              : university || faculty;
+            faculty && university ? `${faculty} • ${university}` : university || faculty;
           document.getElementById("idBadge").textContent = `ID: ${id}`;
+
         } catch (e) {
-          console.error("Failed to parse user data for profile:", e);
+          console.error("Failed to parse user data:", e);
         }
       })();
 
-      // logout button functionality
+      // Logout
       document.getElementById("logoutBtn").addEventListener("click", () => {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         window.location.href = "signin.html";
       });
     </script>
+
+    <!-- Join modal toggle -->
     <script>
       function toggleJoinModal() {
-        const modal = document.getElementById("joinModal");
-        if (modal.style.display === "none" || modal.style.display === "") {
-          modal.style.display = "flex"; // إظهار النافذة
-        } else {
-          modal.style.display = "none"; // إخفاء النافذة
-        }
-      }
+        const modal      = document.getElementById("joinModal");
+        const inputField = modal.querySelector(".material-input");
+        const isHidden   = modal.style.display === "none" || modal.style.display === "";
 
-      // قفل النافذة لو دوست بره الكارت الأبيض
-      window.onclick = function (event) {
-        const modal = document.getElementById("joinModal");
-        if (event.target == modal) {
-          toggleJoinModal();
-        }
-      };
-
-      function toggleJoinModal() {
-        const modal = document.getElementById("joinModal");
-        const inputField = modal.querySelector(".material-input"); // بنجيب مكان الكتابة
-
-        if (modal.style.display === "none" || modal.style.display === "") {
-          // أول ما نفتح النافذة.. نمسح أي كلام قديم
+        if (isHidden) {
           if (inputField) inputField.value = "";
-
           modal.style.display = "flex";
         } else {
           modal.style.display = "none";
         }
       }
+
+      window.onclick = function (event) {
+        const modal = document.getElementById("joinModal");
+        if (event.target === modal) toggleJoinModal();
+      };
     </script>
+
+    <!-- Join Class Modal -->
     <div id="joinModal" class="modal-window-overlay" style="display: none">
       <div class="modal-card">
-        <button onclick="toggleJoinModal()" class="material-close-btn">
-          &times;
-        </button>
-
+        <button onclick="toggleJoinModal()" class="material-close-btn">&times;</button>
         <div class="modal-card-content">
           <div class="material-icon-container">
             <i class="fas fa-plus-square"></i>
           </div>
-
           <h2 class="material-title">Join Class</h2>
-          <p class="material-subtitle">
-            Enter your class ID or access code to join
-          </p>
-
+          <p class="material-subtitle">Enter your class ID or access code to join</p>
           <div class="material-input-group">
             <label>Class Identification</label>
             <input
@@ -578,21 +571,16 @@
               id="joinClassInput"
             />
           </div>
-
           <button class="material-join-btn" id="joinClassBtn">
             <span>Join Class Now</span> <i class="fas fa-arrow-right"></i>
           </button>
-          <div
-            id="joinClassResponse"
-            style="margin-top: 10px; font-size: 14px"
-          ></div>
-
-
+          <div id="joinClassResponse" style="margin-top: 10px; font-size: 14px"></div>
           <p class="material-footer-text">
             Having trouble? Contact your Instructor for the course access code.
           </p>
         </div>
       </div>
     </div>
+
   </body>
 </html>

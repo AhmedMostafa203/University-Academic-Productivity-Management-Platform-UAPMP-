@@ -333,19 +333,6 @@ body {
     color: #64748b;
 }
 
-.btn-details {
-    width: 100%;
-    margin-top: 15px;
-    padding: 10px;
-    border: none;
-    background: #f8fafc;
-    border-radius: 12px;
-    color: #64748b;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
 /* Grades Table */
 .recent-grades {
     background: white;
@@ -519,12 +506,6 @@ body {
     border-color: #cbd5e1;
 }
 
-/* Details Button */
-.btn-details:hover {
-    background: #2563eb !important;
-    color: white !important;
-    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
-}
 
 /* Header Elements */
 .search-bar:focus-within {
@@ -662,16 +643,6 @@ body.dark-mode .banner-circle {
 body.dark-mode .card-header span {
     background: rgba(255, 255, 255, 0.15);
     color: white;
-}
-
-body.dark-mode .btn-details {
-    background: #2d3748;
-    color: #cbd5e1;
-}
-
-body.dark-mode .btn-details:hover {
-    background: #3f4758;
-    color: #e2e8f0;
 }
 
 /* Table Dark Mode */

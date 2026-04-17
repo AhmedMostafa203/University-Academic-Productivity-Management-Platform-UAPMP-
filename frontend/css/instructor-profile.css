@@ -1,5 +1,5 @@
 /* Info row for enrolled class cards */
-.course-card .info-row {
+/* .course-card .info-row {
     display: flex;
     flex-wrap: wrap;
     gap: 12px 18px;
@@ -21,7 +21,7 @@
 .course-card .info-row i {
     color: #2563eb;
     font-size: 15px;
-}
+} */
 
 /* Styles for instructor-profile new components (structure only)
    Minimal, focused on layout and spacing — not colors.
@@ -359,16 +359,6 @@ body.dark-mode .banner-circle {
 body.dark-mode .card-header span {
     background: rgba(255, 255, 255, 0.15);
     color: white;
-}
-
-body.dark-mode .btn-details {
-    background: #2d3748;
-    color: #cbd5e1;
-}
-
-body.dark-mode .btn-details:hover {
-    background: #3f4758;
-    color: #e2e8f0;
 }
 
 /* Table Dark Mode */

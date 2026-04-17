@@ -1,0 +1,1435 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Courses - UAPMP</title>
+    <link rel="stylesheet" href="../css/class.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="sidebar-top">
+          <div class="logo">
+            <div class="logo-icon">
+              <svg
+                class="w-full h-full"
+                fill="none"
+                viewBox="0 0 48 48"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  clip-rule="evenodd"
+                  d="M39.475 21.6262C40.358 21.4363 40.6863 21.5589 40.7581 21.5934C40.7876 21.655 40.8547 21.857 40.8082 22.3336C40.7408 23.0255 40.4502 24.0046 39.8572 25.2301C38.6799 27.6631 36.5085 30.6631 33.5858 33.5858C30.6631 36.5085 27.6632 38.6799 25.2301 39.8572C24.0046 40.4502 23.0255 40.7407 22.3336 40.8082C21.8571 40.8547 21.6551 40.7875 21.5934 40.7581C21.5589 40.6863 21.4363 40.358 21.6262 39.475C21.8562 38.4054 22.4689 36.9657 23.5038 35.2817C24.7575 33.2417 26.5497 30.9744 28.7621 28.762C30.9744 26.5497 33.2417 24.7574 35.2817 23.5037C36.9657 22.4689 38.4054 21.8562 39.475 21.6262ZM4.41189 29.2403L18.7597 43.5881C19.8813 44.7097 21.4027 44.9179 22.7217 44.7893C24.0585 44.659 25.5148 44.1631 26.9723 43.4579C29.9052 42.0387 33.2618 39.5667 36.4142 36.4142C39.5667 33.2618 42.0387 29.9052 43.4579 26.9723C44.1631 25.5148 44.659 24.0585 44.7893 22.7217C44.9179 21.4027 44.7097 19.8813 43.5881 18.7597L29.2403 4.41187C27.8527 3.02428 25.8765 3.02573 24.2861 3.36776C22.6081 3.72863 20.7334 4.58419 18.8396 5.74801C16.4978 7.18716 13.9881 9.18353 11.5858 11.5858C9.18354 13.988 7.18717 16.4978 5.74802 18.8396C4.58421 20.7334 3.72865 22.6081 3.36778 24.2861C3.02574 25.8765 3.02429 27.8527 4.41189 29.2403Z"
+                  fill="currentColor"
+                  fill-rule="evenodd"
+                ></path>
+              </svg>
+            </div>
+            <div class="logo-text">
+              <h1>UAPMP</h1>
+              <span>Student Portal</span>
+            </div>
+          </div>
+          <nav class="menu">
+            <a
+              href="javascript:void(0)"
+              onclick="goToDashboard()"
+              class="menu-item"
+              ><i class="fas fa-th-large"></i> Dashboard</a
+            >
+            <a href="courses.html" class="menu-item active"
+              ><i class="fas fa-book"></i> My Courses</a
+            >
+            <a href="#" class="menu-item"><i class="fas fa-tasks"></i> Tasks</a>
+            <a href="#" class="menu-item"><i class="fas fa-star"></i> Grades</a>
+            <a href="#" class="menu-item"
+              ><i class="fas fa-calendar-alt"></i> Schedule</a
+            >
+            <a href="#" class="menu-item"
+              ><i class="fas fa-cog"></i> Settings</a
+            >
+          </nav>
+        </div>
+        <div class="sidebar-footer">
+          <div class="user-info">
+            <img
+              id="avatarImg"
+              src="https://ui-avatars.com/api/?name=Placeholder&background=random"
+              alt="User"
+            />
+            <div>
+              <p id="sidebarName" class="user-name">Loading...</p>
+              <p id="sidebarId" class="user-id">ID: --</p>
+            </div>
+          </div>
+          <i
+            class="fas fa-sign-out-alt logout-btn"
+            id="logoutBtn"
+            title="Log out"
+          ></i>
+        </div>
+      </aside>
+      <!-- END SIDEBAR -->
+
+      <main class="main-content">
+        <header class="header">
+          <h2>My Course</h2>
+          <div class="header-right">
+            <div class="search-bar">
+              <i class="fas fa-search"></i>
+              <input
+                type="text"
+                placeholder="Search for courses, assignments..."
+              />
+            </div>
+            <div class="header-icons">
+              <a href="notifications.html" class="notification-link">
+                <i class="fa-solid fa-bell"></i>
+              </a>
+              <i class="far fa-moon" id="themeToggle"></i>
+              <img
+                id="topAvatar"
+                src="https://ui-avatars.com/api/?name=Placeholder&background=E5B79B"
+                class="top-avatar"
+              />
+            </div>
+          </div>
+        </header>
+
+        <div class="course-header-row">
+          <div class="course-info-card-premium">
+            <div class="card-inner-content">
+              <span class="course-tag-glass" id="courseCode">--</span>
+              <h1 class="premium-title" id="courseName">Loading...</h1>
+              <div class="course-meta-row" id="courseMeta"></div>
+              <div class="prof-info-box">
+                <img
+                  id="profImg"
+                  src="https://ui-avatars.com/api/?name=?&background=random"
+                  class="prof-img"
+                />
+                <div class="prof-details">
+                  <span id="profName">--</span>
+                  <span class="prof-sub" id="profSub"></span>
+                </div>
+              </div>
+            </div>
+            <div class="card-bg-circle"></div>
+          </div>
+
+          <!-- GPS ATTENDANCE CARD -->
+          <div class="gps-card-premium">
+            <div class="gps-glass-overlay">
+              <div
+                id="gpsStudentView"
+                style="display: flex; flex-direction: column; gap: 14px"
+              >
+                <div class="gps-header">
+                  <div class="gps-pulse-icon">
+                    <i class="fas fa-location-dot"></i>
+                  </div>
+                  <div class="gps-text">
+                    <h3>GPS Attendance</h3>
+                    <p id="studentGpsSubtitle">
+                      Available when you are near the lecture location.
+                    </p>
+                  </div>
+                </div>
+                <div class="student-countdown-wrap" id="studentCountdownWrap">
+                  <div class="student-live-dot">SESSION LIVE</div>
+                  <div class="student-countdown-box">
+                    <span
+                      class="student-countdown-time"
+                      id="studentCountdownTime"
+                      >--:--</span
+                    >
+                    <span class="student-countdown-label">time remaining</span>
+                  </div>
+                </div>
+                <button class="btn-premium-check" onclick="takeGPSAttendance()">
+                  Check In Now
+                </button>
+              </div>
+
+              <div
+                id="gpsInstructorView"
+                style="display: none; flex-direction: column; gap: 14px"
+              >
+                <div class="gps-header">
+                  <div class="gps-pulse-icon">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                  </div>
+                  <div class="gps-text">
+                    <h3>Session Control</h3>
+                    <p id="gpsInstrSubtitle">
+                      Start an attendance session for students.
+                    </p>
+                  </div>
+                </div>
+                <div id="gpsIdlePanel">
+                  <button
+                    class="btn-instructor-start"
+                    onclick="openSetupPanel()"
+                  >
+                    <i class="fas fa-play-circle"></i> Start Session
+                  </button>
+                </div>
+                <div class="gps-setup-panel" id="gpsSetupPanel">
+                  <div class="gps-location-badge loading" id="gpsLocBadge">
+                    <i class="fas fa-circle-notch spin"></i>
+                    <span id="gpsLocText">Detecting your location…</span>
+                  </div>
+                  <div class="dur-field-wrap">
+                    <div class="dur-field-label">
+                      <i
+                        class="fas fa-clock"
+                        style="color: #2563eb; margin-right: 4px"
+                      ></i>
+                      Session Duration
+                    </div>
+                    <div class="dur-number-row">
+                      <button class="dur-step-btn" onclick="stepDuration(-5)">
+                        −
+                      </button>
+                      <div class="dur-input-center">
+                        <input
+                          type="number"
+                          class="dur-number-input"
+                          id="durationInput"
+                          value="30"
+                          min="1"
+                          max="300"
+                          oninput="onDurInput()"
+                        />
+                        <span class="dur-unit-label">minutes</span>
+                      </div>
+                      <button class="dur-step-btn" onclick="stepDuration(5)">
+                        +
+                      </button>
+                    </div>
+                  </div>
+                  <button
+                    class="btn-start-confirm"
+                    id="btnConfirmStart"
+                    onclick="confirmStartSession()"
+                    disabled
+                  >
+                    <i class="fas fa-satellite-dish"></i> Begin Attendance
+                  </button>
+                  <button
+                    onclick="cancelSetup()"
+                    style="
+                      background: none;
+                      border: none;
+                      color: #f8f8f8;
+                      font-size: 15px;
+                      cursor: pointer;
+                      text-align: center;
+                      padding: 4px;
+                    "
+                  >
+                    Cancel
+                  </button>
+                </div>
+                <div class="gps-active-panel" id="gpsActivePanel">
+                  <div class="live-dot">SESSION LIVE</div>
+                  <div class="countdown-wrapper">
+                    <span class="countdown-time" id="countdownTime">--:--</span>
+                    <span class="countdown-label">time remaining</span>
+                  </div>
+                  <div class="session-info-row">
+                    <div class="session-chip">
+                      <span class="session-chip-val" id="chipDuration">--</span>
+                      <span class="session-chip-key">Duration</span>
+                    </div>
+                    <div class="session-chip">
+                      <span class="session-chip-val" id="chipStudents">0</span>
+                      <span class="session-chip-key">Checked In / Total</span>
+                    </div>
+                  </div>
+                  <button class="btn-end-session" onclick="endSessionManual()">
+                    <i class="fas fa-stop-circle"></i> End Session
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════ CLASS ANNOUNCEMENTS ══════════════ -->
+        <div class="updates-container-premium">
+          <div class="updates-header">
+            <div class="header-main-title">
+              <div class="update-icon-circle">
+                <i class="fas fa-bullhorn"></i>
+              </div>
+              <h3>Class Announcements</h3>
+            </div>
+          </div>
+
+          <div class="announcements-stack" id="announcementsStack">
+            <div id="createAnnouncementBtnWrap"></div>
+          </div>
+        </div>
+        <!-- ══════════════ END ANNOUNCEMENTS ══════════════ -->
+      </main>
+    </div>
+
+    <!-- ══ ANNOUNCEMENT MODAL ══════════════════════════════════════ -->
+    <div id="announcementModal" class="modal-overlay">
+      <div class="modal-content">
+        <span class="close-modal" id="closeAnnouncementModal">&times;</span>
+        <div class="modal-header">
+          <div class="modal-header-icon"><i class="fas fa-bullhorn"></i></div>
+          <div>
+            <h2>New Announcement</h2>
+            <p class="modal-subtitle">Share updates with students</p>
+          </div>
+        </div>
+
+        <form id="announcementForm" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="announcementTitle">
+              <i
+                class="fas fa-heading"
+                style="color: #94a3b8; margin-right: 5px; font-size: 11px"
+              ></i
+              >Title
+            </label>
+            <input
+              type="text"
+              id="announcementTitle"
+              name="title"
+              placeholder="e.g. Midterm exam postponed to next week"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="announcementContent">
+              <i
+                class="fas fa-align-left"
+                style="color: #94a3b8; margin-right: 5px; font-size: 11px"
+              ></i
+              >Content
+            </label>
+            <textarea
+              id="announcementContent"
+              name="content"
+              rows="4"
+              placeholder="Write your announcement here…"
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>
+              <i
+                class="fas fa-paperclip"
+                style="color: #94a3b8; margin-right: 5px; font-size: 11px"
+              ></i
+              >Attachments
+            </label>
+            <div class="file-upload-area">
+              <input
+                type="file"
+                id="announcementFiles"
+                name="files"
+                multiple
+                accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.png,.jpg,.jpeg,.gif,.webp,.txt,.zip,.rar,.mp3,.mp4,.mov,.wav,.svg"
+              />
+              <div class="file-upload-icon">
+                <i class="fas fa-cloud-arrow-up"></i>
+              </div>
+              <div class="file-upload-text">
+                Click or drag files here to upload
+              </div>
+              <div class="file-upload-hint">
+                PDF, DOCX, PPTX, images and more
+              </div>
+            </div>
+            <div id="selectedFilesList" class="selected-files-list"></div>
+          </div>
+
+          <div class="form-group">
+            <label>
+              <i
+                class="fas fa-link"
+                style="color: #94a3b8; margin-right: 5px; font-size: 11px"
+              ></i
+              >Links
+            </label>
+            <div class="link-input-row">
+              <textarea
+                id="linkInput"
+                name="link"
+                placeholder="Paste one or more links, separated by spaces, commas, or newlines"
+                rows="2"
+                style="
+                  resize: vertical;
+                  width: 100%;
+                  min-height: 32px;
+                  max-height: 90px;
+                "
+              ></textarea>
+              <button type="button" id="addLinkBtn" class="btn-link-add">
+                <i class="fas fa-plus"></i> Add
+              </button>
+            </div>
+            <ul id="linksList" class="links-list"></ul>
+          </div>
+
+          <div
+            id="announcementError"
+            class="error-message"
+            style="display: none"
+          ></div>
+          <div
+            id="announcementSuccess"
+            class="success-message"
+            style="display: none"
+          >
+            <i class="fas fa-circle-check"></i>
+            <span id="announcementSuccessText"
+              >Announcement posted successfully!</span
+            >
+          </div>
+
+          <button
+            type="submit"
+            id="submitAnnouncementBtn"
+            class="btn-primary"
+            disabled
+          >
+            <span id="submitBtnText"
+              ><i class="fas fa-paper-plane"></i> Post Announcement</span
+            >
+            <span id="submitBtnLoading" style="display: none"
+              ><i class="fas fa-spinner fa-spin"></i> Posting…</span
+            >
+          </button>
+        </form>
+      </div>
+    </div>
+    <!-- ══ END MODAL ══════════════════════════════════════════════ -->
+
+    <!-- Toast -->
+    <div class="gps-toast" id="gpsToast">
+      <i id="gpsToastIcon" class="fas fa-info-circle"></i>
+      <span id="gpsToastMsg">Message</span>
+    </div>
+
+    <!-- ══ SCRIPTS ════════════════════════════════════════════════ -->
+
+    <!-- 1. Dark Mode -->
+    <script>
+      const toggleBtn = document.getElementById("themeToggle");
+      if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark-mode");
+        toggleBtn.classList.replace("fa-moon", "fa-sun");
+      }
+      toggleBtn.addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+        const isDark = document.body.classList.contains("dark-mode");
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+        toggleBtn.classList.toggle("fa-moon", !isDark);
+        toggleBtn.classList.toggle("fa-sun", isDark);
+      });
+    </script>
+
+    <!-- 2. Config -->
+    <script src="../config.js"></script>
+
+    <!-- 3. Auth guard + sidebar -->
+    <script>
+      (function guard() {
+        const token = localStorage.getItem("token");
+        const userJson = localStorage.getItem("user");
+        if (!token || !userJson) {
+          window.location.href = "signin.html";
+          return;
+        }
+        try {
+          const user = JSON.parse(userJson);
+          if (user.role !== "student" && user.role !== "instructor") {
+            window.location.href = "signin.html";
+            return;
+          }
+          fetch(API_CONFIG.BASE_URL + "/api/auth/me", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          })
+            .then((res) => {
+              if (!res.ok) throw new Error("Token verification failed");
+              return res.json();
+            })
+            .then((data) => {
+              localStorage.setItem("user", JSON.stringify(data.user));
+              populateUser();
+              initGPSCard();
+            })
+            .catch((err) => {
+              console.warn("Token verification failed:", err.message);
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+              window.location.href = "signin.html";
+            });
+        } catch {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          window.location.href = "signin.html";
+        }
+      })();
+
+      function populateUser() {
+        const userJson = localStorage.getItem("user");
+        if (!userJson) return;
+        try {
+          const user = JSON.parse(userJson);
+          const name = user.fullName || "";
+          const isInstructor = user.role === "instructor";
+
+          // Swap portal label based on role
+          const portalLabel = document.querySelector(".logo-text span");
+          if (portalLabel) {
+            portalLabel.textContent = isInstructor
+              ? "Instructor Portal"
+              : "Student Portal";
+          }
+
+          document.getElementById("sidebarName").textContent = name;
+
+          // Hide ID for instructors
+          const sidebarId = document.getElementById("sidebarId");
+          if (isInstructor) {
+            sidebarId.style.display = "none";
+          } else {
+            const id = user.studentId || user.id || "--";
+            sidebarId.textContent = `ID: ${id}`;
+            sidebarId.style.display = "";
+          }
+
+          const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`;
+          document.getElementById("avatarImg").src = avatarUrl;
+          document.getElementById("topAvatar").src = avatarUrl.replace(
+            "background=random",
+            "background=E5B79B",
+          );
+        } catch (e) {
+          console.error("Failed to parse user data:", e);
+        }
+      }
+
+      (function populateCourseCard() {
+        try {
+          const raw = localStorage.getItem("selectedClass");
+          if (!raw) return;
+          const cls = JSON.parse(raw);
+          const codeEl = document.getElementById("courseCode");
+          if (codeEl) codeEl.textContent = cls.courseCode || "--";
+          const nameEl = document.getElementById("courseName");
+          if (nameEl) nameEl.textContent = cls.name || "Untitled Course";
+          const metaEl = document.getElementById("courseMeta");
+          if (metaEl) {
+            const chips = [];
+            if (cls.semester)
+              chips.push(
+                `<span class="meta-chip"><i class="fas fa-calendar-alt"></i>${cls.semester}</span>`,
+              );
+            if (cls.year)
+              chips.push(
+                `<span class="meta-chip"><i class="fas fa-layer-group"></i>${cls.year}</span>`,
+              );
+            if (cls.section)
+              chips.push(
+                `<span class="meta-chip"><i class="fas fa-sitemap"></i>Section ${cls.section}</span>`,
+              );
+            if (cls.students)
+              chips.push(
+                `<span class="meta-chip"><i class="fas fa-users"></i>${cls.students.length} students</span>`,
+              );
+            metaEl.innerHTML = chips.join("");
+          }
+          const instructor = cls.instructor || {};
+          const instrName = instructor.fullName || "Instructor";
+          const instrSub = instructor.college || instructor.university || "";
+          const profNameEl = document.getElementById("profName");
+          if (profNameEl) profNameEl.textContent = instrName;
+          const profSubEl = document.getElementById("profSub");
+          if (profSubEl) profSubEl.textContent = instrSub;
+          const profImgEl = document.getElementById("profImg");
+          if (profImgEl)
+            profImgEl.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(instrName)}&background=random`;
+        } catch (e) {
+          console.error("Failed to load course data:", e);
+        }
+      })();
+
+      populateUser();
+
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.href = "signin.html";
+      });
+    </script>
+
+    <!-- 4. Announcements -->
+    <script>
+      (function injectInstructorBtn() {
+        try {
+          const user = JSON.parse(localStorage.getItem("user") || "{}");
+          if (user.role === "instructor") {
+            const wrap = document.getElementById("createAnnouncementBtnWrap");
+            if (wrap) {
+              wrap.innerHTML = `
+                <button id="openAnnouncementModalBtn" class="btn-create-announcement">
+                  <i class="fas fa-plus-circle"></i> Create Announcement
+                </button>`;
+            }
+          }
+        } catch (e) {}
+      })();
+
+      async function fetchAndRenderAnnouncements() {
+        const stack = document.getElementById("announcementsStack");
+        const btnWrap = document.getElementById("createAnnouncementBtnWrap");
+        const btnHTML = btnWrap ? btnWrap.outerHTML : "";
+
+        stack.innerHTML = `${btnHTML}<div style="padding:24px;text-align:center;color:#94a3b8;font-size:14px;"><i class="fas fa-circle-notch fa-spin" style="margin-right:8px;"></i>Loading announcements…</div>`;
+
+        let cls = {};
+        try {
+          cls = JSON.parse(localStorage.getItem("selectedClass") || "{}");
+        } catch {}
+
+        if (!cls._id) {
+          stack.innerHTML = `${btnHTML}<div class="mat-empty"><i class="fas fa-folder-open"></i><p>No class selected.</p></div>`;
+          reattachModalBtn();
+          return;
+        }
+
+        try {
+          const token = localStorage.getItem("token") || "";
+          const res = await fetch(
+            API_CONFIG.BASE_URL +
+              "/api/classannouncements?classId=" +
+              encodeURIComponent(cls._id),
+            { headers: { Authorization: `Bearer ${token}` } },
+          );
+          if (!res.ok) throw new Error("Failed to fetch announcements");
+          const data = await res.json();
+          const announcements = data.announcements || [];
+
+          stack.innerHTML = btnHTML;
+          reattachModalBtn();
+
+          if (announcements.length === 0) {
+            stack.insertAdjacentHTML(
+              "beforeend",
+              `<div class="mat-empty"><i class="fas fa-inbox"></i><p>No announcements yet.</p><span>Check back later for updates from your instructor.</span></div>`,
+            );
+            return;
+          }
+          announcements.forEach((ann) =>
+            stack.appendChild(renderAnnouncementCard(ann)),
+          );
+        } catch (e) {
+          stack.innerHTML = `${btnHTML}<div class="mat-empty"><i class="fas fa-exclamation-circle" style="color:#fca5a5;"></i><p style="color:#ef4444;">${e.message}</p></div>`;
+          reattachModalBtn();
+        }
+      }
+
+      function reattachModalBtn() {
+        const btn = document.getElementById("openAnnouncementModalBtn");
+        if (btn) btn.addEventListener("click", openAnnouncementModal);
+      }
+
+      /* ── Render Card (premium layout) ── */
+      function renderAnnouncementCard(ann) {
+        const card = document.createElement("div");
+        card.className = "announcement-card" + (ann.isPinned ? " pinned" : "");
+
+        const hasAttachments =
+          Array.isArray(ann.attachments) && ann.attachments.length > 0;
+        const hasLinks = Array.isArray(ann.links) && ann.links.length > 0;
+        const hasFooter = hasAttachments || hasLinks;
+
+        const badgeHtml = ann.isPinned
+          ? `<span class="ann-badge pinned"><i class="fas fa-thumbtack"></i> Pinned</span>
+             <span class="ann-badge"><i class="fas fa-bullhorn"></i> Announcement</span>`
+          : `<span class="ann-badge"><i class="fas fa-bullhorn"></i> Announcement</span>`;
+
+        card.innerHTML = `
+          <div class="ann-card-top">
+            <div class="ann-card-accent"></div>
+            <div class="ann-card-body">
+              <div class="ann-card-row1">
+                <div class="ann-card-left">
+                  <div class="ann-type-icon ${ann.isPinned ? "pinned" : ""}">
+                    <i class="fas ${ann.isPinned ? "fa-thumbtack" : "fa-bullhorn"}"></i>
+                  </div>
+                  <div class="ann-title-group">
+                    <div class="ann-title" title="${escapeHtml(ann.title || "")}">${escapeHtml(ann.title || "(No Title)")}</div>
+                    <div class="ann-badge-row">${badgeHtml}</div>
+                  </div>
+                </div>
+                <span class="ann-date">${formatDate(ann.createdAt)}</span>
+              </div>
+              <p class="ann-content">${escapeHtml(ann.message || "")}</p>
+            </div>
+          </div>
+          ${hasFooter ? `<div class="ann-footer">${buildFooter(ann)}</div>` : ""}
+        `;
+        return card;
+      }
+
+      function buildFooter(ann) {
+        let html = "";
+        if (Array.isArray(ann.attachments)) {
+          ann.attachments.forEach((att) => {
+            const ext = (att.originalName || att.fileName || "")
+              .split(".")
+              .pop()
+              .toLowerCase();
+            const extClass = getExtClass(ext);
+            const extLabel = ext.toUpperCase().slice(0, 4) || "FILE";
+            const displayName =
+              att.originalName || att.fileName || "attachment";
+            let fileUrl = att.fileUrl;
+            if (typeof fileUrl === "string" && fileUrl.trim()) {
+              if (!/^https?:\/\//i.test(fileUrl)) {
+                fileUrl =
+                  (window.API_CONFIG
+                    ? API_CONFIG.BASE_URL
+                    : "http://localhost:5000") +
+                  (fileUrl.startsWith("/uploads/")
+                    ? fileUrl
+                    : "/uploads/" +
+                      encodeURIComponent(fileUrl.replace(/^\/uploads\//, "")));
+              }
+              html += `
+                <a href="${escapeHtml(fileUrl)}" download="${escapeHtml(displayName)}" target="_blank" class="mat-attach" title="${escapeHtml(displayName)}">
+                  <div class="mat-attach-ext ${extClass}">${extLabel}</div>
+                  <span>${escapeHtml(displayName)}</span>
+                </a>`;
+            }
+          });
+        }
+        if (Array.isArray(ann.links)) {
+          ann.links.forEach((url) => {
+            const label =
+              url.replace(/^https?:\/\//, "").slice(0, 30) +
+              (url.length > 38 ? "…" : "");
+            html += `
+              <a href="${escapeHtml(url)}" target="_blank" class="mat-link" title="${escapeHtml(url)}">
+                <svg class="mat-link-globe" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18zm0 0c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m8.716 5.253A8.97 8.97 0 0112 10.5a8.97 8.97 0 01-8.716-2.247"/>
+                </svg>
+                <span>${escapeHtml(label)}</span>
+              </a>`;
+          });
+        }
+        return html;
+      }
+
+      function getExtClass(ext) {
+        const map = {
+          pdf: "pdf",
+          doc: "doc",
+          docx: "docx",
+          xls: "xls",
+          xlsx: "xlsx",
+          ppt: "ppt",
+          pptx: "pptx",
+          mp4: "mp4",
+          mov: "mov",
+          mp3: "mp3",
+          wav: "wav",
+          zip: "zip",
+          rar: "rar",
+          png: "img",
+          jpg: "img",
+          jpeg: "img",
+          gif: "img",
+          webp: "img",
+          svg: "img",
+        };
+        return map[ext] || "default";
+      }
+
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function formatDate(dateStr) {
+        const d = new Date(dateStr);
+        if (isNaN(d)) return "";
+        return d.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+      }
+
+      document.addEventListener(
+        "DOMContentLoaded",
+        fetchAndRenderAnnouncements,
+      );
+    </script>
+
+    <!-- 5. Announcement Modal Logic -->
+    <script>
+      let _links = [];
+
+      function openAnnouncementModal() {
+        resetAnnouncementForm();
+        document.getElementById("announcementModal").style.display = "flex";
+      }
+
+      function closeAnnouncementModal() {
+        document.getElementById("announcementModal").style.display = "none";
+        resetAnnouncementForm();
+      }
+
+      function resetAnnouncementForm() {
+        document.getElementById("announcementForm").reset();
+        _links = [];
+        document.getElementById("selectedFilesList").innerHTML = "";
+        document.getElementById("linksList").innerHTML = "";
+        document.getElementById("announcementError").style.display = "none";
+        document.getElementById("announcementSuccess").style.display = "none";
+        document.getElementById("submitAnnouncementBtn").disabled = true;
+        document.getElementById("submitBtnText").style.display = "";
+        document.getElementById("submitBtnLoading").style.display = "none";
+      }
+
+      document
+        .getElementById("announcementModal")
+        .addEventListener("click", function (e) {
+          if (e.target === this) closeAnnouncementModal();
+        });
+      document
+        .getElementById("closeAnnouncementModal")
+        .addEventListener("click", closeAnnouncementModal);
+
+      function updateAnnouncementSubmit() {
+        const title = document.getElementById("announcementTitle").value.trim();
+        const content = document
+          .getElementById("announcementContent")
+          .value.trim();
+        document.getElementById("submitAnnouncementBtn").disabled =
+          !title || !content;
+      }
+      document
+        .getElementById("announcementTitle")
+        .addEventListener("input", updateAnnouncementSubmit);
+      document
+        .getElementById("announcementContent")
+        .addEventListener("input", updateAnnouncementSubmit);
+
+      document
+        .getElementById("announcementFiles")
+        .addEventListener("change", function () {
+          const list = document.getElementById("selectedFilesList");
+          list.innerHTML = "";
+          Array.from(this.files).forEach((f) => {
+            const ext = f.name.split(".").pop().toLowerCase();
+            list.innerHTML += `
+            <div class="selected-file-item">
+              <i class="fas fa-file-${ext === "pdf" ? "pdf" : ext === "mp4" || ext === "mov" ? "video" : "alt"}"></i>
+              <span>${f.name}</span>
+              <span style="margin-left:auto;color:#94a3b8;font-size:11px;">${(f.size / 1024).toFixed(1)} KB</span>
+            </div>`;
+          });
+        });
+
+      document.getElementById("addLinkBtn").addEventListener("click", () => {
+        const input = document.getElementById("linkInput");
+        const urls = input.value
+          .trim()
+          .split(/[\s,]+/)
+          .filter(Boolean);
+        const errorDiv = document.getElementById("announcementError");
+        if (!urls.length) return;
+        let invalid = false;
+        urls.forEach((url) => {
+          try {
+            new URL(url);
+            if (!_links.includes(url)) _links.push(url);
+          } catch {
+            invalid = true;
+          }
+        });
+        renderLinks();
+        input.value = "";
+        if (invalid) {
+          errorDiv.textContent = "One or more URLs were invalid and skipped.";
+          errorDiv.style.display = "block";
+        } else {
+          errorDiv.style.display = "none";
+        }
+      });
+
+      function renderLinks() {
+        const list = document.getElementById("linksList");
+        list.innerHTML = "";
+        _links.forEach((url, idx) => {
+          const li = document.createElement("li");
+          li.innerHTML = `
+            <a href="${url}" target="_blank">${url.replace(/^https?:\/\//, "").slice(0, 45)}${url.length > 53 ? "…" : ""}</a>
+            <button type="button" onclick="removeLink(${idx})" title="Remove"><i class="fas fa-times"></i></button>`;
+          list.appendChild(li);
+        });
+      }
+
+      window.removeLink = function (idx) {
+        _links.splice(idx, 1);
+        renderLinks();
+      };
+
+      document
+        .getElementById("announcementForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const errorDiv = document.getElementById("announcementError");
+          const successDiv = document.getElementById("announcementSuccess");
+          const submitBtn = document.getElementById("submitAnnouncementBtn");
+          errorDiv.style.display = "none";
+          successDiv.style.display = "none";
+          submitBtn.disabled = true;
+          document.getElementById("submitBtnText").style.display = "none";
+          document.getElementById("submitBtnLoading").style.display = "";
+
+          const formData = new FormData();
+          formData.append(
+            "title",
+            document.getElementById("announcementTitle").value.trim(),
+          );
+          formData.append(
+            "message",
+            document.getElementById("announcementContent").value.trim(),
+          );
+          let cls = {};
+          try {
+            cls = JSON.parse(localStorage.getItem("selectedClass") || "{}");
+          } catch {}
+          formData.append("classId", cls._id || "");
+          formData.append("links", JSON.stringify(_links));
+          Array.from(
+            document.getElementById("announcementFiles").files,
+          ).forEach((file) => formData.append("files", file));
+
+          try {
+            const token = localStorage.getItem("token") || "";
+            const res = await fetch(
+              API_CONFIG.BASE_URL + "/api/classannouncements",
+              {
+                method: "POST",
+                headers: { Authorization: `Bearer ${token}` },
+                body: formData,
+              },
+            );
+            let data = null;
+            if (!res.ok) {
+              try {
+                data = await res.json();
+              } catch {}
+              throw new Error(data?.message || "Failed to post announcement");
+            }
+            successDiv.style.display = "flex";
+            document.getElementById("announcementSuccessText").textContent =
+              "Announcement posted successfully!";
+            setTimeout(() => {
+              closeAnnouncementModal();
+              fetchAndRenderAnnouncements();
+            }, 1400);
+          } catch (err) {
+            errorDiv.textContent = err.message || "Failed to post announcement";
+            errorDiv.style.display = "block";
+            submitBtn.disabled = false;
+            document.getElementById("submitBtnText").style.display = "";
+            document.getElementById("submitBtnLoading").style.display = "none";
+          }
+        });
+    </script>
+
+    <!-- 6. GPS Attendance -->
+    <script>
+      let _sessionId = null,
+        _sessionEndAt = null,
+        _totalDurMin = null;
+      let _countdownInt = null,
+        _instrLat = null,
+        _instrLng = null,
+        _selectedMin = null;
+
+      function getTotalEnrolled() {
+        try {
+          return (
+            JSON.parse(localStorage.getItem("selectedClass") || "{}")
+              .students || []
+          ).length;
+        } catch {
+          return 0;
+        }
+      }
+
+      function showToast(msg, type = "info") {
+        const toast = document.getElementById("gpsToast");
+        const icon = document.getElementById("gpsToastIcon");
+        const text = document.getElementById("gpsToastMsg");
+        toast.className = `gps-toast ${type}`;
+        icon.className =
+          type === "success"
+            ? "fas fa-check-circle"
+            : type === "error"
+              ? "fas fa-exclamation-circle"
+              : "fas fa-info-circle";
+        text.textContent = msg;
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 3800);
+      }
+
+      function initGPSCard() {
+        const userJson = localStorage.getItem("user");
+        if (!userJson) return;
+        const user = JSON.parse(userJson);
+        if (user.role !== "instructor") {
+          initStudentCountdown();
+          return;
+        }
+        document.getElementById("gpsStudentView").style.display = "none";
+        document.getElementById("gpsInstructorView").style.display = "flex";
+        checkExistingSession();
+      }
+
+      let _studentCountdownInt = null;
+
+      async function initStudentCountdown() {
+        Object.keys(localStorage).forEach((key) => {
+          if (key.startsWith("checkedIn_")) localStorage.removeItem(key);
+        });
+        try {
+          const cls = JSON.parse(localStorage.getItem("selectedClass") || "{}");
+          const token = localStorage.getItem("token");
+          const user = JSON.parse(localStorage.getItem("user") || "{}");
+          if (!cls._id) return;
+          const res = await fetch(
+            API_CONFIG.BASE_URL + `/api/attendance/active-session/${cls._id}`,
+            { headers: { Authorization: `Bearer ${token}` } },
+          );
+          if (res.ok) {
+            const data = await res.json(),
+              s = data.session;
+            document
+              .getElementById("studentCountdownWrap")
+              .classList.add("visible");
+            document.getElementById("studentGpsSubtitle").textContent =
+              "A session is live — check in before time runs out!";
+            startStudentCountdown(
+              new Date(s.expiresAt),
+              new Date(s.expiresAt) - new Date(s.startedAt),
+            );
+            const userId = String(user._id || user.id || "").trim();
+            if (
+              (s.students || []).some(
+                (entry) => String(entry.studentId || "").trim() === userId,
+              )
+            )
+              setCheckedInState();
+          }
+        } catch (e) {
+          console.error("[GPS] initStudentCountdown error:", e);
+        }
+      }
+
+      function startStudentCountdown(endDate, totalMs) {
+        const timeEl = document.getElementById("studentCountdownTime");
+        clearInterval(_studentCountdownInt);
+        function tick() {
+          const remaining = endDate - Date.now();
+          if (remaining <= 0) {
+            clearInterval(_studentCountdownInt);
+            timeEl.textContent = "00:00";
+            timeEl.className = "student-countdown-time critical";
+            document
+              .getElementById("studentCountdownWrap")
+              .classList.remove("visible");
+            document.getElementById("studentGpsSubtitle").textContent =
+              "Available when you are near the lecture location.";
+            return;
+          }
+          const mins = Math.floor(remaining / 60000),
+            secs = Math.floor((remaining % 60000) / 1000);
+          timeEl.textContent = `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+          const ratio = remaining / totalMs;
+          timeEl.className =
+            "student-countdown-time" +
+            (ratio < 0.2 ? " critical" : ratio < 0.4 ? " warning" : "");
+        }
+        tick();
+        _studentCountdownInt = setInterval(tick, 1000);
+      }
+
+      async function checkExistingSession() {
+        try {
+          const cls = JSON.parse(localStorage.getItem("selectedClass") || "{}");
+          const token = localStorage.getItem("token");
+          if (!cls._id) return;
+          const res = await fetch(
+            API_CONFIG.BASE_URL + `/api/attendance/active-session/${cls._id}`,
+            { headers: { Authorization: `Bearer ${token}` } },
+          );
+          if (res.ok) {
+            const data = await res.json(),
+              s = data.session;
+            _sessionId = s._id;
+            _sessionEndAt = new Date(s.expiresAt);
+            _totalDurMin = Math.round(
+              (new Date(s.expiresAt) - new Date(s.startedAt)) / 60000,
+            );
+            showActivePanel(s);
+            showToast("Active session found — restoring", "info");
+          }
+        } catch {}
+      }
+
+      function openSetupPanel() {
+        document.getElementById("gpsIdlePanel").style.display = "none";
+        document.getElementById("gpsSetupPanel").classList.add("visible");
+        _selectedMin = 30;
+        updateConfirmBtn();
+        fetchInstructorGPS();
+      }
+
+      function cancelSetup() {
+        document.getElementById("gpsSetupPanel").classList.remove("visible");
+        document.getElementById("gpsIdlePanel").style.display = "block";
+        _instrLat = null;
+        _instrLng = null;
+        _selectedMin = null;
+        document.getElementById("durationInput").value = 30;
+        document.getElementById("btnConfirmStart").disabled = true;
+      }
+
+      function fetchInstructorGPS() {
+        const badge = document.getElementById("gpsLocBadge");
+        badge.className = "gps-location-badge loading";
+        badge.innerHTML = `<i class="fas fa-circle-notch spin"></i> <span>Detecting your location…</span>`;
+        if (!navigator.geolocation) {
+          badge.className = "gps-location-badge error";
+          badge.innerHTML = `<i class="fas fa-triangle-exclamation"></i> <span>GPS not supported</span>`;
+          return;
+        }
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            _instrLat = pos.coords.latitude;
+            _instrLng = pos.coords.longitude;
+            localStorage.setItem(
+              "instructorLocation",
+              JSON.stringify({
+                lat: _instrLat,
+                lng: _instrLng,
+                ts: Date.now(),
+              }),
+            );
+            badge.className = "gps-location-badge ready";
+            badge.innerHTML = `<i class="fas fa-circle-check"></i> <span>Location detected ✓</span>`;
+            updateConfirmBtn();
+          },
+          () => {
+            badge.className = "gps-location-badge error";
+            badge.innerHTML = `<i class="fas fa-triangle-exclamation"></i> <span>Failed to detect location</span>`;
+          },
+          { enableHighAccuracy: true, timeout: 10000 },
+        );
+      }
+
+      function stepDuration(delta) {
+        const inp = document.getElementById("durationInput");
+        inp.value = Math.max(
+          1,
+          Math.min(300, (parseInt(inp.value) || 30) + delta),
+        );
+        _selectedMin = parseInt(inp.value);
+        updateConfirmBtn();
+      }
+
+      function onDurInput() {
+        const val = parseInt(document.getElementById("durationInput").value);
+        _selectedMin = val > 0 ? val : null;
+        updateConfirmBtn();
+      }
+
+      function updateConfirmBtn() {
+        document.getElementById("btnConfirmStart").disabled = !(
+          _instrLat !== null && _selectedMin !== null
+        );
+      }
+
+      async function confirmStartSession() {
+        const btn = document.getElementById("btnConfirmStart");
+        const token = localStorage.getItem("token");
+        const cls = JSON.parse(localStorage.getItem("selectedClass") || "{}");
+        const durVal = parseInt(document.getElementById("durationInput").value);
+        if (durVal > 0) _selectedMin = durVal;
+        if (!cls._id) {
+          showToast("No course selected", "error");
+          return;
+        }
+        if (!_instrLat) {
+          showToast("Location not detected yet", "error");
+          return;
+        }
+        if (!_selectedMin) {
+          showToast("Please choose a duration", "error");
+          return;
+        }
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fas fa-circle-notch spin"></i> Creating session…`;
+        try {
+          const res = await fetch(
+            API_CONFIG.BASE_URL + "/api/attendance/session",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                classId: cls._id,
+                duration: _selectedMin,
+                location: { lat: _instrLat, lng: _instrLng, radius: 50 },
+              }),
+            },
+          );
+          const data = await res.json();
+          if (!res.ok)
+            throw new Error(data.message || "Failed to create session");
+          const s = data.session;
+          _sessionId = s._id;
+          _sessionEndAt = new Date(s.expiresAt);
+          _totalDurMin = _selectedMin;
+          document.getElementById("gpsSetupPanel").classList.remove("visible");
+          showActivePanel(s);
+          showToast("Session started ✓", "success");
+        } catch (err) {
+          showToast(err.message, "error");
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fas fa-satellite-dish"></i> Begin Attendance`;
+        }
+      }
+
+      function showActivePanel(session) {
+        document.getElementById("gpsIdlePanel").style.display = "none";
+        document.getElementById("gpsSetupPanel").classList.remove("visible");
+        document.getElementById("gpsActivePanel").classList.add("visible");
+        const durMin =
+          _totalDurMin ||
+          Math.round(
+            (new Date(session.expiresAt) - new Date(session.startedAt)) / 60000,
+          );
+        document.getElementById("chipDuration").textContent = `${durMin} min`;
+        document.getElementById("chipStudents").textContent =
+          `${session.totalStudents || 0} / ${getTotalEnrolled()}`;
+        startCountdown(new Date(session.expiresAt), durMin);
+      }
+
+      function startCountdown(endDate, totalMin) {
+        const timeEl = document.getElementById("countdownTime");
+        const totalMs = totalMin * 60 * 1000;
+        clearInterval(_countdownInt);
+        function tick() {
+          const remaining = endDate - Date.now();
+          if (remaining <= 0) {
+            clearInterval(_countdownInt);
+            timeEl.textContent = "00:00";
+            timeEl.className = "countdown-time critical";
+            onSessionExpired();
+            return;
+          }
+          const mins = Math.floor(remaining / 60000),
+            secs = Math.floor((remaining % 60000) / 1000);
+          timeEl.textContent = `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+          const ratio = remaining / totalMs;
+          timeEl.className =
+            "countdown-time" +
+            (ratio < 0.2 ? " critical" : ratio < 0.4 ? " warning" : "");
+          if (Date.now() % 15000 < 1200) refreshStudentCount();
+        }
+        tick();
+        _countdownInt = setInterval(tick, 1000);
+      }
+
+      async function refreshStudentCount() {
+        try {
+          const cls = JSON.parse(localStorage.getItem("selectedClass") || "{}");
+          const token = localStorage.getItem("token");
+          const res = await fetch(
+            API_CONFIG.BASE_URL + `/api/attendance/active-session/${cls._id}`,
+            { headers: { Authorization: `Bearer ${token}` } },
+          );
+          if (res.ok) {
+            const data = await res.json();
+            document.getElementById("chipStudents").textContent =
+              `${data.session.totalStudents || 0} / ${getTotalEnrolled()}`;
+          }
+        } catch {}
+      }
+
+      function onSessionExpired() {
+        showToast("Session expired", "info");
+        resetToIdle();
+      }
+
+      async function endSessionManual() {
+        if (!_sessionId) return;
+        const token = localStorage.getItem("token");
+        const btn = document.querySelector(".btn-end-session");
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fas fa-circle-notch spin"></i> Ending…`;
+        try {
+          const res = await fetch(
+            API_CONFIG.BASE_URL + `/api/attendance/end-session/${_sessionId}`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            },
+          );
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.message || "Failed to end session");
+          showToast("Session ended ✓", "success");
+          clearInterval(_countdownInt);
+          resetToIdle();
+        } catch (err) {
+          showToast(err.message, "error");
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fas fa-stop-circle"></i> End Session`;
+        }
+      }
+
+      function resetToIdle() {
+        _sessionId = null;
+        _sessionEndAt = null;
+        _totalDurMin = null;
+        _selectedMin = null;
+        _instrLat = null;
+        _instrLng = null;
+        clearInterval(_countdownInt);
+        document.getElementById("gpsActivePanel").classList.remove("visible");
+        document.getElementById("gpsSetupPanel").classList.remove("visible");
+        document.getElementById("gpsIdlePanel").style.display = "block";
+        const durInp = document.getElementById("durationInput");
+        if (durInp) durInp.value = 30;
+        const confirmBtn = document.getElementById("btnConfirmStart");
+        if (confirmBtn) {
+          confirmBtn.disabled = true;
+          confirmBtn.innerHTML = `<i class="fas fa-satellite-dish"></i> Begin Attendance`;
+        }
+        const endBtn = document.querySelector(".btn-end-session");
+        if (endBtn) {
+          endBtn.disabled = false;
+          endBtn.innerHTML = `<i class="fas fa-stop-circle"></i> End Session`;
+        }
+      }
+
+      function setCheckedInState() {
+        const btn = document.querySelector(".btn-premium-check");
+        if (!btn) return;
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fas fa-circle-check"></i> You checked in successfully`;
+        btn.style.cssText =
+          "background:#334155;cursor:not-allowed;opacity:1;box-shadow:0 4px 14px rgba(51,65,85,0.3);";
+      }
+
+      async function takeGPSAttendance() {
+        const btn = document.querySelector(".btn-premium-check");
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fas fa-circle-notch spin"></i> Detecting location…`;
+        navigator.geolocation.getCurrentPosition(
+          async (pos) => {
+            const lat = pos.coords.latitude,
+              lng = pos.coords.longitude;
+            const token = localStorage.getItem("token");
+            const cls = JSON.parse(
+              localStorage.getItem("selectedClass") || "{}",
+            );
+            try {
+              const sessRes = await fetch(
+                API_CONFIG.BASE_URL +
+                  `/api/attendance/active-session/${cls._id}`,
+                { headers: { Authorization: `Bearer ${token}` } },
+              );
+              if (!sessRes.ok) {
+                showToast("No active session", "error");
+                btn.disabled = false;
+                btn.innerHTML = `Check In Now`;
+                return;
+              }
+              const { session } = await sessRes.json();
+              const res = await fetch(
+                API_CONFIG.BASE_URL + "/api/attendance/check-in",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                  },
+                  body: JSON.stringify({ sessionId: session._id, lat, lng }),
+                },
+              );
+              const data = await res.json();
+              if (!res.ok) throw new Error(data.message);
+              showToast("Attendance recorded ✓", "success");
+              setCheckedInState();
+            } catch (e) {
+              showToast(e.message, "error");
+              btn.disabled = false;
+              btn.innerHTML = `Check In Now`;
+            }
+          },
+          () => {
+            showToast("Failed to detect location", "error");
+            btn.disabled = false;
+            btn.innerHTML = `Check In Now`;
+          },
+          { enableHighAccuracy: true },
+        );
+      }
+    </script>
+
+    <!-- 7. Navigation -->
+    <script>
+      function goToDashboard() {
+        try {
+          const user = JSON.parse(localStorage.getItem("user") || "{}");
+          window.location.href =
+            user.role === "instructor"
+              ? "instructor-profile.html"
+              : "student-profile.html";
+        } catch {
+          window.location.href = "student-profile.html";
+        }
+      }
+    </script>
+  </body>
+</html>

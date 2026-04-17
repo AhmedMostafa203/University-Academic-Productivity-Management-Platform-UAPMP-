@@ -1,3 +1,4 @@
+const path = require("path");
 /**
  * UAPMP Backend Server
  * Main entry point for the application
@@ -10,10 +11,37 @@ const cors = require("cors");
 
 const authRoutes = require("./routes/auth");
 const announcementRoutes = require("./routes/announcement");
+const classAnnouncementRoutes = require("./routes/classannouncement");
 const classesRoutes = require("./routes/classes");
 const attendanceRoutes = require("./routes/attendance");
 
+// Express server setup for UAPMP Backend (Announcements Only)
 const app = express();
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Static uploads folder (for announcement attachments)
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// Health check route
+app.get("/", (req, res) => {
+  res.send("UAPMP Backend API is running (Announcements Only)");
+});
+
+// Enhanced logging middleware for debugging
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
+  if (req.method === "POST" || req.method === "PUT") {
+    console.log("Body:", req.body);
+    if (req.files) console.log("Files:", req.files);
+  }
+  next();
+});
+
+// Materials routes removed. Only announcements are used in this project.
 
 // ============================================
 // MIDDLEWARE CONFIGURATION
@@ -39,8 +67,10 @@ app.use(express.json());
 // ============================================
 // Mount authentication routes at /api/auth endpoint
 app.use("/api/auth", authRoutes);
-// Mount announcement routes at /api/announcements endpoint
+// Mount announcement routes at /api/announcements endpoint (admin/global)
 app.use("/api/announcements", announcementRoutes);
+// Mount class announcement routes at /api/classannouncements endpoint (class-specific)
+app.use("/api/classannouncements", classAnnouncementRoutes);
 // Mount classes routes at /api/classes endpoint
 app.use("/api/classes", classesRoutes);
 // Mount attendance routes at /api/attendance endpoint
@@ -56,8 +86,9 @@ mongoose
     console.log("[INFO] Database connection established successfully");
 
     // Start the Express server only after database connection is established
-    app.listen(process.env.PORT, () => {
-      console.log(`[SUCCESS] Server initialized on port ${process.env.PORT}`);
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+      console.log(`[SUCCESS] Server initialized on port ${PORT}`);
       console.log("[INFO] Application is ready to accept requests");
     });
   })
@@ -66,3 +97,11 @@ mongoose
     console.error("[ERROR] Database connection failed:", err.message);
     process.exit(1);
   });
+
+// Catch-all error handler (always returns JSON)
+app.use((err, req, res, next) => {
+  console.error("[GLOBAL ERROR]", err);
+  res
+    .status(500)
+    .json({ message: "Internal server error", error: err.message });
+});
